@@ -14,16 +14,457 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      company_profile: {
+        Row: {
+          address: string
+          currency: string
+          default_terms: string
+          email: string
+          id: string
+          logo_url: string | null
+          mobile1: string
+          mobile2: string | null
+          name: string
+          signature_url: string | null
+          stamp_url: string | null
+          tagline: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string
+          currency?: string
+          default_terms?: string
+          email?: string
+          id?: string
+          logo_url?: string | null
+          mobile1?: string
+          mobile2?: string | null
+          name?: string
+          signature_url?: string | null
+          stamp_url?: string | null
+          tagline?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string
+          currency?: string
+          default_terms?: string
+          email?: string
+          id?: string
+          logo_url?: string | null
+          mobile1?: string
+          mobile2?: string | null
+          name?: string
+          signature_url?: string | null
+          stamp_url?: string | null
+          tagline?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          alt_mobile: string | null
+          billing_address: string | null
+          city: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          mobile: string
+          name: string
+          notes: string | null
+          site_address: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_mobile?: string | null
+          billing_address?: string | null
+          city?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          mobile: string
+          name: string
+          notes?: string | null
+          site_address?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_mobile?: string | null
+          billing_address?: string | null
+          city?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string
+          name?: string
+          notes?: string | null
+          site_address?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          amount: number
+          description: string | null
+          id: string
+          invoice_id: string
+          particular: string
+          qty: number
+          rate: number
+          sr: number
+          unit: string | null
+        }
+        Insert: {
+          amount?: number
+          description?: string | null
+          id?: string
+          invoice_id: string
+          particular?: string
+          qty?: number
+          rate?: number
+          sr?: number
+          unit?: string | null
+        }
+        Update: {
+          amount?: number
+          description?: string | null
+          id?: string
+          invoice_id?: string
+          particular?: string
+          qty?: number
+          rate?: number
+          sr?: number
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount_words: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          date: string
+          discount: number
+          due_date: string | null
+          grand_total: number
+          id: string
+          quotation_id: string | null
+          status: string
+          subject: string | null
+          subtotal: number
+          terms: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_words?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          date?: string
+          discount?: number
+          due_date?: string | null
+          grand_total?: number
+          id?: string
+          quotation_id?: string | null
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          terms?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_words?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          date?: string
+          discount?: number
+          due_date?: string | null
+          grand_total?: number
+          id?: string
+          quotation_id?: string | null
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          terms?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      quotation_items: {
+        Row: {
+          amount: number
+          description: string | null
+          id: string
+          particular: string
+          qty: number
+          quotation_id: string
+          rate: number
+          sr: number
+          unit: string | null
+        }
+        Insert: {
+          amount?: number
+          description?: string | null
+          id?: string
+          particular?: string
+          qty?: number
+          quotation_id: string
+          rate?: number
+          sr?: number
+          unit?: string | null
+        }
+        Update: {
+          amount?: number
+          description?: string | null
+          id?: string
+          particular?: string
+          qty?: number
+          quotation_id?: string
+          rate?: number
+          sr?: number
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotation_items_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotations: {
+        Row: {
+          amount_words: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          date: string
+          discount: number
+          grand_total: number
+          id: string
+          status: string
+          subject: string | null
+          subtotal: number
+          terms: string | null
+          updated_at: string
+          valid_till: string | null
+        }
+        Insert: {
+          amount_words?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          date?: string
+          discount?: number
+          grand_total?: number
+          id?: string
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          terms?: string | null
+          updated_at?: string
+          valid_till?: string | null
+        }
+        Update: {
+          amount_words?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          date?: string
+          discount?: number
+          grand_total?: number
+          id?: string
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          terms?: string | null
+          updated_at?: string
+          valid_till?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotations_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receipts: {
+        Row: {
+          amount_received: number
+          amount_words: string | null
+          balance: number
+          code: string
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          date: string
+          id: string
+          invoice_id: string | null
+          mode: string
+          notes: string | null
+          previous_paid: number
+          total_amount: number
+          txn_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_received?: number
+          amount_words?: string | null
+          balance?: number
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          date?: string
+          id?: string
+          invoice_id?: string | null
+          mode?: string
+          notes?: string | null
+          previous_paid?: number
+          total_amount?: number
+          txn_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_received?: number
+          amount_words?: string | null
+          balance?: number
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          date?: string
+          id?: string
+          invoice_id?: string | null
+          mode?: string
+          notes?: string | null
+          previous_paid?: number
+          total_amount?: number
+          txn_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      next_code: {
+        Args: { _prefix: string; _seq: string; _with_year: boolean }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +591,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "employee"],
+    },
   },
 } as const
