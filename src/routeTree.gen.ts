@@ -9,38 +9,262 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
+import { Route as AuthenticatedReceiptsIndexRouteImport } from './routes/_authenticated/receipts/index'
+import { Route as AuthenticatedQuotationsIndexRouteImport } from './routes/_authenticated/quotations/index'
+import { Route as AuthenticatedInvoicesIndexRouteImport } from './routes/_authenticated/invoices/index'
+import { Route as AuthenticatedReceiptsNewRouteImport } from './routes/_authenticated/receipts/new'
+import { Route as AuthenticatedReceiptsIdRouteImport } from './routes/_authenticated/receipts/$id'
+import { Route as AuthenticatedQuotationsNewRouteImport } from './routes/_authenticated/quotations/new'
+import { Route as AuthenticatedQuotationsIdRouteImport } from './routes/_authenticated/quotations/$id'
+import { Route as AuthenticatedInvoicesNewRouteImport } from './routes/_authenticated/invoices/new'
+import { Route as AuthenticatedInvoicesIdRouteImport } from './routes/_authenticated/invoices/$id'
+import { Route as AuthenticatedQuotationsIdEditRouteImport } from './routes/_authenticated/quotations/$id.edit'
+import { Route as AuthenticatedInvoicesIdEditRouteImport } from './routes/_authenticated/invoices/$id.edit'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReceiptsIndexRoute =
+  AuthenticatedReceiptsIndexRouteImport.update({
+    id: '/receipts/',
+    path: '/receipts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuotationsIndexRoute =
+  AuthenticatedQuotationsIndexRouteImport.update({
+    id: '/quotations/',
+    path: '/quotations/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInvoicesIndexRoute =
+  AuthenticatedInvoicesIndexRouteImport.update({
+    id: '/invoices/',
+    path: '/invoices/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReceiptsNewRoute =
+  AuthenticatedReceiptsNewRouteImport.update({
+    id: '/receipts/new',
+    path: '/receipts/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReceiptsIdRoute = AuthenticatedReceiptsIdRouteImport.update({
+  id: '/receipts/$id',
+  path: '/receipts/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQuotationsNewRoute =
+  AuthenticatedQuotationsNewRouteImport.update({
+    id: '/quotations/new',
+    path: '/quotations/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuotationsIdRoute =
+  AuthenticatedQuotationsIdRouteImport.update({
+    id: '/quotations/$id',
+    path: '/quotations/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInvoicesNewRoute =
+  AuthenticatedInvoicesNewRouteImport.update({
+    id: '/invoices/new',
+    path: '/invoices/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInvoicesIdRoute = AuthenticatedInvoicesIdRouteImport.update({
+  id: '/invoices/$id',
+  path: '/invoices/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQuotationsIdEditRoute =
+  AuthenticatedQuotationsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedQuotationsIdRoute,
+  } as any)
+const AuthenticatedInvoicesIdEditRoute =
+  AuthenticatedInvoicesIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedInvoicesIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoices/$id': typeof AuthenticatedInvoicesIdRouteWithChildren
+  '/invoices/new': typeof AuthenticatedInvoicesNewRoute
+  '/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/receipts/new': typeof AuthenticatedReceiptsNewRoute
+  '/invoices/': typeof AuthenticatedInvoicesIndexRoute
+  '/quotations/': typeof AuthenticatedQuotationsIndexRoute
+  '/receipts/': typeof AuthenticatedReceiptsIndexRoute
+  '/invoices/$id/edit': typeof AuthenticatedInvoicesIdEditRoute
+  '/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoices/$id': typeof AuthenticatedInvoicesIdRouteWithChildren
+  '/invoices/new': typeof AuthenticatedInvoicesNewRoute
+  '/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/receipts/new': typeof AuthenticatedReceiptsNewRoute
+  '/invoices': typeof AuthenticatedInvoicesIndexRoute
+  '/quotations': typeof AuthenticatedQuotationsIndexRoute
+  '/receipts': typeof AuthenticatedReceiptsIndexRoute
+  '/invoices/$id/edit': typeof AuthenticatedInvoicesIdEditRoute
+  '/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/customers': typeof AuthenticatedCustomersRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/invoices/$id': typeof AuthenticatedInvoicesIdRouteWithChildren
+  '/_authenticated/invoices/new': typeof AuthenticatedInvoicesNewRoute
+  '/_authenticated/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/_authenticated/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/_authenticated/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/_authenticated/receipts/new': typeof AuthenticatedReceiptsNewRoute
+  '/_authenticated/invoices/': typeof AuthenticatedInvoicesIndexRoute
+  '/_authenticated/quotations/': typeof AuthenticatedQuotationsIndexRoute
+  '/_authenticated/receipts/': typeof AuthenticatedReceiptsIndexRoute
+  '/_authenticated/invoices/$id/edit': typeof AuthenticatedInvoicesIdEditRoute
+  '/_authenticated/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/customers'
+    | '/dashboard'
+    | '/invoices/$id'
+    | '/invoices/new'
+    | '/quotations/$id'
+    | '/quotations/new'
+    | '/receipts/$id'
+    | '/receipts/new'
+    | '/invoices/'
+    | '/quotations/'
+    | '/receipts/'
+    | '/invoices/$id/edit'
+    | '/quotations/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/customers'
+    | '/dashboard'
+    | '/invoices/$id'
+    | '/invoices/new'
+    | '/quotations/$id'
+    | '/quotations/new'
+    | '/receipts/$id'
+    | '/receipts/new'
+    | '/invoices'
+    | '/quotations'
+    | '/receipts'
+    | '/invoices/$id/edit'
+    | '/quotations/$id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/customers'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/invoices/$id'
+    | '/_authenticated/invoices/new'
+    | '/_authenticated/quotations/$id'
+    | '/_authenticated/quotations/new'
+    | '/_authenticated/receipts/$id'
+    | '/_authenticated/receipts/new'
+    | '/_authenticated/invoices/'
+    | '/_authenticated/quotations/'
+    | '/_authenticated/receipts/'
+    | '/_authenticated/invoices/$id/edit'
+    | '/_authenticated/quotations/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +272,165 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/customers': {
+      id: '/_authenticated/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthenticatedCustomersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/receipts/': {
+      id: '/_authenticated/receipts/'
+      path: '/receipts'
+      fullPath: '/receipts/'
+      preLoaderRoute: typeof AuthenticatedReceiptsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/': {
+      id: '/_authenticated/quotations/'
+      path: '/quotations'
+      fullPath: '/quotations/'
+      preLoaderRoute: typeof AuthenticatedQuotationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/invoices/': {
+      id: '/_authenticated/invoices/'
+      path: '/invoices'
+      fullPath: '/invoices/'
+      preLoaderRoute: typeof AuthenticatedInvoicesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/receipts/new': {
+      id: '/_authenticated/receipts/new'
+      path: '/receipts/new'
+      fullPath: '/receipts/new'
+      preLoaderRoute: typeof AuthenticatedReceiptsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/receipts/$id': {
+      id: '/_authenticated/receipts/$id'
+      path: '/receipts/$id'
+      fullPath: '/receipts/$id'
+      preLoaderRoute: typeof AuthenticatedReceiptsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/new': {
+      id: '/_authenticated/quotations/new'
+      path: '/quotations/new'
+      fullPath: '/quotations/new'
+      preLoaderRoute: typeof AuthenticatedQuotationsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/$id': {
+      id: '/_authenticated/quotations/$id'
+      path: '/quotations/$id'
+      fullPath: '/quotations/$id'
+      preLoaderRoute: typeof AuthenticatedQuotationsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/invoices/new': {
+      id: '/_authenticated/invoices/new'
+      path: '/invoices/new'
+      fullPath: '/invoices/new'
+      preLoaderRoute: typeof AuthenticatedInvoicesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/invoices/$id': {
+      id: '/_authenticated/invoices/$id'
+      path: '/invoices/$id'
+      fullPath: '/invoices/$id'
+      preLoaderRoute: typeof AuthenticatedInvoicesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/$id/edit': {
+      id: '/_authenticated/quotations/$id/edit'
+      path: '/edit'
+      fullPath: '/quotations/$id/edit'
+      preLoaderRoute: typeof AuthenticatedQuotationsIdEditRouteImport
+      parentRoute: typeof AuthenticatedQuotationsIdRoute
+    }
+    '/_authenticated/invoices/$id/edit': {
+      id: '/_authenticated/invoices/$id/edit'
+      path: '/edit'
+      fullPath: '/invoices/$id/edit'
+      preLoaderRoute: typeof AuthenticatedInvoicesIdEditRouteImport
+      parentRoute: typeof AuthenticatedInvoicesIdRoute
+    }
   }
 }
 
+interface AuthenticatedInvoicesIdRouteChildren {
+  AuthenticatedInvoicesIdEditRoute: typeof AuthenticatedInvoicesIdEditRoute
+}
+
+const AuthenticatedInvoicesIdRouteChildren: AuthenticatedInvoicesIdRouteChildren =
+  {
+    AuthenticatedInvoicesIdEditRoute: AuthenticatedInvoicesIdEditRoute,
+  }
+
+const AuthenticatedInvoicesIdRouteWithChildren =
+  AuthenticatedInvoicesIdRoute._addFileChildren(
+    AuthenticatedInvoicesIdRouteChildren,
+  )
+
+interface AuthenticatedQuotationsIdRouteChildren {
+  AuthenticatedQuotationsIdEditRoute: typeof AuthenticatedQuotationsIdEditRoute
+}
+
+const AuthenticatedQuotationsIdRouteChildren: AuthenticatedQuotationsIdRouteChildren =
+  {
+    AuthenticatedQuotationsIdEditRoute: AuthenticatedQuotationsIdEditRoute,
+  }
+
+const AuthenticatedQuotationsIdRouteWithChildren =
+  AuthenticatedQuotationsIdRoute._addFileChildren(
+    AuthenticatedQuotationsIdRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInvoicesIdRoute: typeof AuthenticatedInvoicesIdRouteWithChildren
+  AuthenticatedInvoicesNewRoute: typeof AuthenticatedInvoicesNewRoute
+  AuthenticatedQuotationsIdRoute: typeof AuthenticatedQuotationsIdRouteWithChildren
+  AuthenticatedQuotationsNewRoute: typeof AuthenticatedQuotationsNewRoute
+  AuthenticatedReceiptsIdRoute: typeof AuthenticatedReceiptsIdRoute
+  AuthenticatedReceiptsNewRoute: typeof AuthenticatedReceiptsNewRoute
+  AuthenticatedInvoicesIndexRoute: typeof AuthenticatedInvoicesIndexRoute
+  AuthenticatedQuotationsIndexRoute: typeof AuthenticatedQuotationsIndexRoute
+  AuthenticatedReceiptsIndexRoute: typeof AuthenticatedReceiptsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInvoicesIdRoute: AuthenticatedInvoicesIdRouteWithChildren,
+  AuthenticatedInvoicesNewRoute: AuthenticatedInvoicesNewRoute,
+  AuthenticatedQuotationsIdRoute: AuthenticatedQuotationsIdRouteWithChildren,
+  AuthenticatedQuotationsNewRoute: AuthenticatedQuotationsNewRoute,
+  AuthenticatedReceiptsIdRoute: AuthenticatedReceiptsIdRoute,
+  AuthenticatedReceiptsNewRoute: AuthenticatedReceiptsNewRoute,
+  AuthenticatedInvoicesIndexRoute: AuthenticatedInvoicesIndexRoute,
+  AuthenticatedQuotationsIndexRoute: AuthenticatedQuotationsIndexRoute,
+  AuthenticatedReceiptsIndexRoute: AuthenticatedReceiptsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
