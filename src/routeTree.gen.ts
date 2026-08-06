@@ -15,6 +15,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
+import { Route as AuthenticatedQuotationsIndexRouteImport } from './routes/_authenticated/quotations/index'
+import { Route as AuthenticatedQuotationsNewRouteImport } from './routes/_authenticated/quotations/new'
+import { Route as AuthenticatedQuotationsIdRouteImport } from './routes/_authenticated/quotations/$id'
+import { Route as AuthenticatedQuotationsIdEditRouteImport } from './routes/_authenticated/quotations/$id.edit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -45,6 +49,30 @@ const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedQuotationsIndexRoute =
+  AuthenticatedQuotationsIndexRouteImport.update({
+    id: '/quotations/',
+    path: '/quotations/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuotationsNewRoute =
+  AuthenticatedQuotationsNewRouteImport.update({
+    id: '/quotations/new',
+    path: '/quotations/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuotationsIdRoute =
+  AuthenticatedQuotationsIdRouteImport.update({
+    id: '/quotations/$id',
+    path: '/quotations/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuotationsIdEditRoute =
+  AuthenticatedQuotationsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedQuotationsIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +80,10 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/quotations/': typeof AuthenticatedQuotationsIndexRoute
+  '/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +91,10 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/quotations': typeof AuthenticatedQuotationsIndexRoute
+  '/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +104,34 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/quotations/$id': typeof AuthenticatedQuotationsIdRouteWithChildren
+  '/_authenticated/quotations/new': typeof AuthenticatedQuotationsNewRoute
+  '/_authenticated/quotations/': typeof AuthenticatedQuotationsIndexRoute
+  '/_authenticated/quotations/$id/edit': typeof AuthenticatedQuotationsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/reset-password' | '/customers' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/customers'
+    | '/dashboard'
+    | '/quotations/$id'
+    | '/quotations/new'
+    | '/quotations/'
+    | '/quotations/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/reset-password' | '/customers' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/customers'
+    | '/dashboard'
+    | '/quotations/$id'
+    | '/quotations/new'
+    | '/quotations'
+    | '/quotations/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -82,6 +140,10 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/customers'
     | '/_authenticated/dashboard'
+    | '/_authenticated/quotations/$id'
+    | '/_authenticated/quotations/new'
+    | '/_authenticated/quotations/'
+    | '/_authenticated/quotations/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -135,17 +197,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/quotations/': {
+      id: '/_authenticated/quotations/'
+      path: '/quotations'
+      fullPath: '/quotations/'
+      preLoaderRoute: typeof AuthenticatedQuotationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/new': {
+      id: '/_authenticated/quotations/new'
+      path: '/quotations/new'
+      fullPath: '/quotations/new'
+      preLoaderRoute: typeof AuthenticatedQuotationsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/$id': {
+      id: '/_authenticated/quotations/$id'
+      path: '/quotations/$id'
+      fullPath: '/quotations/$id'
+      preLoaderRoute: typeof AuthenticatedQuotationsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quotations/$id/edit': {
+      id: '/_authenticated/quotations/$id/edit'
+      path: '/edit'
+      fullPath: '/quotations/$id/edit'
+      preLoaderRoute: typeof AuthenticatedQuotationsIdEditRouteImport
+      parentRoute: typeof AuthenticatedQuotationsIdRoute
+    }
   }
 }
+
+interface AuthenticatedQuotationsIdRouteChildren {
+  AuthenticatedQuotationsIdEditRoute: typeof AuthenticatedQuotationsIdEditRoute
+}
+
+const AuthenticatedQuotationsIdRouteChildren: AuthenticatedQuotationsIdRouteChildren =
+  {
+    AuthenticatedQuotationsIdEditRoute: AuthenticatedQuotationsIdEditRoute,
+  }
+
+const AuthenticatedQuotationsIdRouteWithChildren =
+  AuthenticatedQuotationsIdRoute._addFileChildren(
+    AuthenticatedQuotationsIdRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedQuotationsIdRoute: typeof AuthenticatedQuotationsIdRouteWithChildren
+  AuthenticatedQuotationsNewRoute: typeof AuthenticatedQuotationsNewRoute
+  AuthenticatedQuotationsIndexRoute: typeof AuthenticatedQuotationsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedQuotationsIdRoute: AuthenticatedQuotationsIdRouteWithChildren,
+  AuthenticatedQuotationsNewRoute: AuthenticatedQuotationsNewRoute,
+  AuthenticatedQuotationsIndexRoute: AuthenticatedQuotationsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
