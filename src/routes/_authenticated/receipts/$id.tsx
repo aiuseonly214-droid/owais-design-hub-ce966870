@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/receipts/$id")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: ReceiptView;
+  component: ReceiptView,
 });
 
 function ReceiptView() {
