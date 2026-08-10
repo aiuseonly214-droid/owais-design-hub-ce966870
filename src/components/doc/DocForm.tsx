@@ -148,22 +148,12 @@ export function DocForm({
         <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2">
             <Label className="mb-1.5 block">Customer *</Label>
-            <Select
+            <CustomerPicker
               value={form.customer_id}
-              onValueChange={(v) => setForm({ ...form, customer_id: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a customer" />
-              </SelectTrigger>
-              <SelectContent>
-                {customers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name} — {c.mobile}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(v) => setForm({ ...form, customer_id: v })}
+            />
           </div>
+
           <div>
             <Label className="mb-1.5 block">Date</Label>
             <Input
