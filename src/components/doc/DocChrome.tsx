@@ -72,16 +72,21 @@ export function DocFooter({
         <div className="relative w-[240px] text-center">
           <div className="flex h-[54px] items-end justify-center gap-2">
             {company.stamp_url && (
-              <img src={company.stamp_url} alt="Company stamp" className="h-[54px] object-contain" />
-            )}
-            {company.signature_url && (
               <img
-                src={company.signature_url}
-                alt="Authorised signature"
-                className="h-[44px] object-contain"
+                src={company.stamp_url}
+                alt="Company stamp"
+                crossOrigin="anonymous"
+                className="h-[54px] object-contain"
               />
             )}
+            <img
+              src={company.signature_url || defaultSignature}
+              alt="Authorised signature"
+              crossOrigin="anonymous"
+              className="h-[44px] object-contain mix-blend-multiply"
+            />
           </div>
+
           <div style={{ borderColor: "#9A8B6A" }} className="mb-1 border-b border-dashed" />
           <p className="text-[11px] font-medium text-[#5A4A50]">
             For {company.name} — Authorised Signatory
