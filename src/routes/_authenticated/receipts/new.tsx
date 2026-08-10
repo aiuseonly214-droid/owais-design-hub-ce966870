@@ -112,8 +112,10 @@ function NewReceipt() {
         amount_words: amountInWords(toNumber(form.amount_received)),
         notes: form.notes || null,
       } as never);
+      if (invoiceId) await syncInvoiceStatus(invoiceId);
       toast.success("Receipt saved");
       navigate({ to: "/receipts/$id", params: { id } });
+
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not save the receipt");
     } finally {
