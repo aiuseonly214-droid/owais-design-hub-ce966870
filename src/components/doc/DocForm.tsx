@@ -59,10 +59,8 @@ export function DocForm({
 }) {
   const navigate = useNavigate();
   const { data: company } = useQuery({ queryKey: ["company"], queryFn: fetchCompany });
-  const { data: customers = [] } = useQuery({
-    queryKey: ["customers", ""],
-    queryFn: () => fetchCustomers(""),
-  });
+  const statusOptions = kind === "quotation" ? QUOTATION_STATUS : INVOICE_STATUS;
+
 
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<DocFormValues>({
