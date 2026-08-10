@@ -225,11 +225,23 @@ export function DocForm({
                 </div>
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Unit</Label>
-                  <Input
-                    value={it.unit ?? ""}
-                    onChange={(e) => patchItem(idx, { unit: e.target.value })}
-                  />
+                  <Select
+                    value={it.unit || "Nos"}
+                    onValueChange={(v) => patchItem(idx, { unit: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((u) => (
+                        <SelectItem key={u} value={u}>
+                          {u}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Qty</Label>
                   <Input
