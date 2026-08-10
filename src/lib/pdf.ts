@@ -77,7 +77,8 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
   const pxPerMm = canvas.width / pageW;
   const pageHpx = Math.floor(pageH * pxPerMm);
 
-  if (canvas.height <= pageHpx) {
+  // Allow a small overshoot so a couple of stray pixels never spawn a blank page.
+  if (canvas.height <= pageHpx * 1.02) {
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, pageW, canvas.height / pxPerMm);
   } else {
     // Slice the tall canvas into real A4 pages so nothing overlaps.
@@ -85,6 +86,8 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
     let first = true;
     while (y < canvas.height) {
       const sliceH = Math.min(pageHpx, canvas.height - y);
+      // Skip a trailing sliver of empty whitespace.
+      if (!first && sliceH < pageHpx * 0.04) break;
       const slice = document.createElement("canvas");
       slice.width = canvas.width;
       slice.height = sliceH;
@@ -98,6 +101,7 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
       first = false;
       y += sliceH;
     }
+
   }
 
   const name = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
