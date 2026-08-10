@@ -4,7 +4,7 @@ import { DEFAULT_LOGO_URL, DEFAULT_SIGNATURE_URL } from "@/lib/branding";
 
 /** Maroon + gold letterhead shared by quotation, invoice and receipt sheets. */
 export function DocHeader({ company }: { company: CompanyProfile }) {
-  const logo = company.logo_url || defaultLogo;
+  const logo = company.logo_url || DEFAULT_LOGO_URL;
   return (
     <div>
       <div
@@ -80,7 +80,7 @@ export function DocFooter({
               />
             )}
             <img
-              src={company.signature_url || defaultSignature}
+              src={company.signature_url || DEFAULT_SIGNATURE_URL}
               alt="Authorised signature"
               crossOrigin="anonymous"
               className="h-[44px] object-contain mix-blend-multiply"
