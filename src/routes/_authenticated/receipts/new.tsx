@@ -16,7 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchCustomers, fetchInvoice, fetchPaidSoFar, saveReceipt } from "@/lib/crm";
+import {
+  fetchCustomers,
+  fetchInvoice,
+  fetchPaidSoFar,
+  saveReceipt,
+  syncInvoiceStatus,
+} from "@/lib/crm";
+
 import { amountInWords, formatINR, todayISO, toNumber } from "@/lib/format";
 import { PAYMENT_MODES } from "@/lib/options";
 
