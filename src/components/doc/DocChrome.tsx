@@ -1,6 +1,6 @@
 import type { CompanyProfile } from "@/lib/crm";
-import defaultLogo from "@/assets/owais-logo.png";
-import defaultSignature from "@/assets/owais-signature.jpg";
+import { DEFAULT_LOGO_URL, DEFAULT_SIGNATURE_URL } from "@/lib/branding";
+
 
 /** Maroon + gold letterhead shared by quotation, invoice and receipt sheets. */
 export function DocHeader({ company }: { company: CompanyProfile }) {
