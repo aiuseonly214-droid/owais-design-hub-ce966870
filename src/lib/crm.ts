@@ -100,6 +100,13 @@ const db = supabase as unknown as {
   from: (table: string) => any;
 };
 
+/** Current signed-in user id, used to stamp `created_by` on new rows. */
+async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+
 /* ---------------- company ---------------- */
 
 export async function fetchCompany(): Promise<CompanyProfile> {
