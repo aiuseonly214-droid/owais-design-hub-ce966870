@@ -170,6 +170,22 @@ export function DocForm({
               onChange={(e) => setForm({ ...form, secondaryDate: e.target.value })}
             />
           </div>
+          <div className="lg:col-span-4">
+            <Label className="mb-1.5 block">Status</Label>
+            <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+              <SelectTrigger className="sm:max-w-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="sm:col-span-2 lg:col-span-4">
             <Label className="mb-1.5 block">Subject</Label>
             <Input
