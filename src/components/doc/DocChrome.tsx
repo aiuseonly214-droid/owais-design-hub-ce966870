@@ -1,27 +1,23 @@
 import type { CompanyProfile } from "@/lib/crm";
+import { DEFAULT_LOGO_URL, DEFAULT_SIGNATURE_URL } from "@/lib/branding";
+
 
 /** Maroon + gold letterhead shared by quotation, invoice and receipt sheets. */
 export function DocHeader({ company }: { company: CompanyProfile }) {
+  const logo = company.logo_url || DEFAULT_LOGO_URL;
   return (
     <div>
       <div
         style={{ backgroundColor: "#6B1024", color: "#FFF8F0" }}
         className="flex items-center gap-5 px-10 py-6"
       >
-        {company.logo_url ? (
-          <img
-            src={company.logo_url}
-            alt={`${company.name} logo`}
-            className="h-[70px] w-[70px] shrink-0 rounded-full bg-white object-contain p-1"
-          />
-        ) : (
-          <div
-            style={{ borderColor: "#C9A227", color: "#C9A227" }}
-            className="flex h-[70px] w-[70px] shrink-0 items-center justify-center rounded-full border-2 font-display text-2xl"
-          >
-            OI
-          </div>
-        )}
+        <img
+          src={logo}
+          alt={`${company.name} logo`}
+          crossOrigin="anonymous"
+          className="h-[70px] w-[70px] shrink-0 rounded-full bg-white object-contain p-1"
+        />
+
 
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-[26px] leading-tight tracking-wide">{company.name}</h1>
@@ -76,16 +72,21 @@ export function DocFooter({
         <div className="relative w-[240px] text-center">
           <div className="flex h-[54px] items-end justify-center gap-2">
             {company.stamp_url && (
-              <img src={company.stamp_url} alt="Company stamp" className="h-[54px] object-contain" />
-            )}
-            {company.signature_url && (
               <img
-                src={company.signature_url}
-                alt="Authorised signature"
-                className="h-[44px] object-contain"
+                src={company.stamp_url}
+                alt="Company stamp"
+                crossOrigin="anonymous"
+                className="h-[54px] object-contain"
               />
             )}
+            <img
+              src={company.signature_url || DEFAULT_SIGNATURE_URL}
+              alt="Authorised signature"
+              crossOrigin="anonymous"
+              className="h-[44px] object-contain mix-blend-multiply"
+            />
           </div>
+
           <div style={{ borderColor: "#9A8B6A" }} className="mb-1 border-b border-dashed" />
           <p className="text-[11px] font-medium text-[#5A4A50]">
             For {company.name} — Authorised Signatory

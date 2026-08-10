@@ -100,6 +100,13 @@ const db = supabase as unknown as {
   from: (table: string) => any;
 };
 
+/** Current signed-in user id, used to stamp `created_by` on new rows. */
+async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+
 /* ---------------- company ---------------- */
 
 export async function fetchCompany(): Promise<CompanyProfile> {
@@ -146,7 +153,11 @@ export async function saveCustomer(payload: Partial<Customer> & { id?: string })
     if (error) throw error;
     return id;
   }
-  const { data, error } = await db.from("customers").insert(payload).select("id").single();
+  const { data, error } = await db
+    .from("customers")
+    .insert({ ...payload, created_by: await currentUserId() })
+    .select("id")
+    .single();
   if (error) throw error;
   return data.id as string;
 }
@@ -189,7 +200,11 @@ export async function saveQuotation(doc: Partial<Quotation> & { id?: string }, i
     if (error) throw error;
     await db.from("quotation_items").delete().eq("quotation_id", id);
   } else {
-    const { data, error } = await db.from("quotations").insert(body).select("id").single();
+    const { data, error } = await db
+      .from("quotations")
+      .insert({ ...body, created_by: await currentUserId() })
+      .select("id")
+      .single();
     if (error) throw error;
     id = data.id as string;
   }
@@ -245,7 +260,11 @@ export async function saveInvoice(doc: Partial<Invoice> & { id?: string }, items
     if (error) throw error;
     await db.from("invoice_items").delete().eq("invoice_id", id);
   } else {
-    const { data, error } = await db.from("invoices").insert(body).select("id").single();
+    const { data, error } = await db
+      .from("invoices")
+      .insert({ ...body, created_by: await currentUserId() })
+      .select("id")
+      .single();
     if (error) throw error;
     id = data.id as string;
   }
@@ -294,9 +313,31 @@ export async function saveReceipt(doc: Partial<Receipt> & { id?: string }) {
     if (error) throw error;
     return id as string;
   }
-  const { data, error } = await db.from("receipts").insert(body).select("id").single();
+  const { data, error } = await db
+    .from("receipts")
+    .insert({ ...body, created_by: await currentUserId() })
+    .select("id")
+    .single();
   if (error) throw error;
   return data.id as string;
+}
+
+/**
+ * Recalculate an invoice's status from the receipts booked against it:
+ * paid when fully settled, partial when something is received, unpaid otherwise.
+ */
+export async function syncInvoiceStatus(invoiceId: string) {
+  const { data: inv } = await db
+    .from("invoices")
+    .select("grand_total")
+    .eq("id", invoiceId)
+    .maybeSingle();
+  if (!inv) return;
+  const { data: rs } = await db.from("receipts").select("amount_received").eq("invoice_id", invoiceId);
+  const paid = (rs ?? []).reduce((s: number, r: any) => s + Number(r.amount_received || 0), 0);
+  const total = Number(inv.grand_total || 0);
+  const status = paid <= 0 ? "unpaid" : paid + 0.5 >= total ? "paid" : "partial";
+  await db.from("invoices").update({ status }).eq("id", invoiceId);
 }
 
 export async function deleteReceipt(id: string) {

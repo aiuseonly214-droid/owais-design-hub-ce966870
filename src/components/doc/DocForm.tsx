@@ -15,14 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CustomerPicker } from "@/components/doc/CustomerPicker";
 import {
   fetchCompany,
-  fetchCustomers,
   saveInvoice,
   saveQuotation,
   type DocItem,
 } from "@/lib/crm";
+import { INVOICE_STATUS, QUOTATION_STATUS, UNITS } from "@/lib/options";
 import { addDaysISO, amountInWords, formatINR, toNumber, todayISO } from "@/lib/format";
+
 
 export type DocFormValues = {
   id?: string;
@@ -57,10 +59,8 @@ export function DocForm({
 }) {
   const navigate = useNavigate();
   const { data: company } = useQuery({ queryKey: ["company"], queryFn: fetchCompany });
-  const { data: customers = [] } = useQuery({
-    queryKey: ["customers", ""],
-    queryFn: () => fetchCustomers(""),
-  });
+  const statusOptions = kind === "quotation" ? QUOTATION_STATUS : INVOICE_STATUS;
+
 
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<DocFormValues>({
@@ -146,22 +146,12 @@ export function DocForm({
         <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2">
             <Label className="mb-1.5 block">Customer *</Label>
-            <Select
+            <CustomerPicker
               value={form.customer_id}
-              onValueChange={(v) => setForm({ ...form, customer_id: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a customer" />
-              </SelectTrigger>
-              <SelectContent>
-                {customers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name} — {c.mobile}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(v) => setForm({ ...form, customer_id: v })}
+            />
           </div>
+
           <div>
             <Label className="mb-1.5 block">Date</Label>
             <Input
@@ -180,6 +170,22 @@ export function DocForm({
               onChange={(e) => setForm({ ...form, secondaryDate: e.target.value })}
             />
           </div>
+          <div className="lg:col-span-4">
+            <Label className="mb-1.5 block">Status</Label>
+            <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+              <SelectTrigger className="sm:max-w-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="sm:col-span-2 lg:col-span-4">
             <Label className="mb-1.5 block">Subject</Label>
             <Input
@@ -235,11 +241,23 @@ export function DocForm({
                 </div>
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Unit</Label>
-                  <Input
-                    value={it.unit ?? ""}
-                    onChange={(e) => patchItem(idx, { unit: e.target.value })}
-                  />
+                  <Select
+                    value={it.unit || "Nos"}
+                    onValueChange={(v) => patchItem(idx, { unit: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((u) => (
+                        <SelectItem key={u} value={u}>
+                          {u}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Qty</Label>
                   <Input
