@@ -1,27 +1,23 @@
 import type { CompanyProfile } from "@/lib/crm";
+import defaultLogo from "@/assets/owais-logo.png";
+import defaultSignature from "@/assets/owais-signature.jpg";
 
 /** Maroon + gold letterhead shared by quotation, invoice and receipt sheets. */
 export function DocHeader({ company }: { company: CompanyProfile }) {
+  const logo = company.logo_url || defaultLogo;
   return (
     <div>
       <div
         style={{ backgroundColor: "#6B1024", color: "#FFF8F0" }}
         className="flex items-center gap-5 px-10 py-6"
       >
-        {company.logo_url ? (
-          <img
-            src={company.logo_url}
-            alt={`${company.name} logo`}
-            className="h-[70px] w-[70px] shrink-0 rounded-full bg-white object-contain p-1"
-          />
-        ) : (
-          <div
-            style={{ borderColor: "#C9A227", color: "#C9A227" }}
-            className="flex h-[70px] w-[70px] shrink-0 items-center justify-center rounded-full border-2 font-display text-2xl"
-          >
-            OI
-          </div>
-        )}
+        <img
+          src={logo}
+          alt={`${company.name} logo`}
+          crossOrigin="anonymous"
+          className="h-[70px] w-[70px] shrink-0 rounded-full bg-white object-contain p-1"
+        />
+
 
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-[26px] leading-tight tracking-wide">{company.name}</h1>
