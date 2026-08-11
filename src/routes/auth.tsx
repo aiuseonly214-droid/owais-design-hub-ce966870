@@ -40,9 +40,24 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
-    });
+    let active = true;
+    supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          // Expired / corrupt stored session — wipe it so the form works again.
+          void supabase.auth.signOut({ scope: "local" });
+          return;
+        }
+        if (data.session) navigate({ to: "/dashboard", replace: true });
+      })
+      .catch(() => {
+        void supabase.auth.signOut({ scope: "local" });
+      });
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   async function signIn(e: React.FormEvent) {

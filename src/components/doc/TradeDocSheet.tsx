@@ -103,11 +103,6 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                 <td className="border border-[#E0D3D6] px-2 py-2 text-center align-top">{idx + 1}</td>
                 <td className="border border-[#E0D3D6] px-2 py-2 align-top">
                   <span className="font-medium text-[#241318]">{it.particular}</span>
-                  {it.description && (
-                    <span className="block text-[10.5px] leading-snug text-[#7A6A70]">
-                      {it.description}
-                    </span>
-                  )}
                 </td>
                 <td className="border border-[#E0D3D6] px-2 py-2 text-center align-top">
                   {it.unit || "—"}

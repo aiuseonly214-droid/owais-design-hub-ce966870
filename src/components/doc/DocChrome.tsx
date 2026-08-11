@@ -83,7 +83,7 @@ export function DocFooter({
               src={company.signature_url || DEFAULT_SIGNATURE_URL}
               alt="Authorised signature"
               crossOrigin="anonymous"
-              className="h-[44px] object-contain mix-blend-multiply"
+              className="h-[46px] object-contain"
             />
           </div>
 
