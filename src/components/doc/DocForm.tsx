@@ -315,10 +315,12 @@ export function DocForm({
               </Label>
               <Input
                 id="discount"
-                type="number"
+                type="text"
                 inputMode="decimal"
-                className="w-36 text-right"
-                value={form.discount}
+                placeholder="0"
+                className="w-36 text-right tabular-nums"
+                value={form.discount === 0 ? "" : String(form.discount)}
+                onFocus={(e) => e.currentTarget.select()}
                 onChange={(e) => setForm({ ...form, discount: toNumber(e.target.value) })}
               />
             </div>
