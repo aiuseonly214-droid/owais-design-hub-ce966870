@@ -42,7 +42,7 @@ function AuthPage() {
   useEffect(() => {
     let active = true;
     supabase.auth
-      .getSession()
+      .getUser()
       .then(({ data, error }) => {
         if (!active) return;
         if (error) {
@@ -50,7 +50,7 @@ function AuthPage() {
           void supabase.auth.signOut({ scope: "local" });
           return;
         }
-        if (data.session) navigate({ to: "/dashboard", replace: true });
+        if (data.user) navigate({ to: "/dashboard", replace: true });
       })
       .catch(() => {
         void supabase.auth.signOut({ scope: "local" });
@@ -63,9 +63,17 @@ function AuthPage() {
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      if (error.message.toLowerCase().includes("invalid login credentials")) {
+        return toast.error("Email ya password sahi nahi hai. Dobara check karein.");
+      }
+      return toast.error(error.message);
+    }
     navigate({ to: "/dashboard", replace: true });
   }
 
