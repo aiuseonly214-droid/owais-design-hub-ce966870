@@ -5,16 +5,15 @@ import { AppShell } from "@/components/AppShell";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    // A stored session whose refresh token expired (e.g. laptop was shut down
-    // for a while) must be cleared, otherwise every request keeps failing and
-    // the app looks frozen on a blank screen.
+    // Revalidate the stored identity with Auth instead of trusting a cached
+    // session that may have expired while the device was offline.
     try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error || !data.session) {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
         await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
         throw redirect({ to: "/auth" });
       }
-      return { user: data.session.user };
+      return { user: data.user };
     } catch (e) {
       if (e && typeof e === "object" && "isRedirect" in e) throw e;
       await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
