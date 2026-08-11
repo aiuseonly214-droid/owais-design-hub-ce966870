@@ -50,6 +50,24 @@ function saveBlob(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
+/** Wait until fonts and every <img> inside the node are really painted. */
+async function waitForPaint(el: HTMLElement) {
+  try {
+    await (document as Document & { fonts?: FontFaceSet }).fonts?.ready;
+  } catch {
+    /* ignore */
+  }
+  await Promise.all(
+    Array.from(el.querySelectorAll("img")).map((img) =>
+      img.complete ? img.decode().catch(() => undefined) : new Promise<void>((res) => {
+        img.addEventListener("load", () => res(), { once: true });
+        img.addEventListener("error", () => res(), { once: true });
+      }),
+    ),
+  );
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+}
+
 export async function exportElementToPdf(el: HTMLElement, filename: string) {
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
     import("html2canvas-pro"),
@@ -57,6 +75,7 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
   ]);
 
   const restore = await inlineImages(el);
+  await waitForPaint(el);
   let canvas: HTMLCanvasElement;
   try {
     canvas = await html2canvas(el, {
@@ -66,6 +85,15 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
       allowTaint: false,
       logging: false,
       windowWidth: el.scrollWidth,
+      onclone: (_doc, clone) => {
+        // Force the brand colours onto the clone so a missed style never
+        // leaves the letterhead / table header blank white in the export.
+        clone.querySelectorAll<HTMLElement>("[style*='6B1024']").forEach((n) => {
+          n.style.setProperty("background-color", "#6B1024", "important");
+          n.style.setProperty("color", "#FFF8F0", "important");
+          n.style.setProperty("-webkit-print-color-adjust", "exact");
+        });
+      },
     });
   } finally {
     restore();
