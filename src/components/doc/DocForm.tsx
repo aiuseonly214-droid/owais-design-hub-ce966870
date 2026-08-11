@@ -228,18 +228,10 @@ export function DocForm({
                   <Input
                     value={it.particular}
                     onChange={(e) => patchItem(idx, { particular: e.target.value })}
-                    placeholder="False ceiling"
+                    placeholder="False ceiling — gypsum with cove lighting"
                   />
                 </div>
-                <div className="md:col-span-3">
-                  <Label className="mb-1 block text-xs">Description</Label>
-                  <Input
-                    value={it.description ?? ""}
-                    onChange={(e) => patchItem(idx, { description: e.target.value })}
-                    placeholder="Gypsum with cove lighting"
-                  />
-                </div>
-                <div className="md:col-span-1">
+                <div className="md:col-span-2">
                   <Label className="mb-1 block text-xs">Unit</Label>
                   <Select
                     value={it.unit || "Nos"}
@@ -258,28 +250,34 @@ export function DocForm({
                   </Select>
                 </div>
 
-                <div className="md:col-span-1">
+                <div className="md:col-span-2">
                   <Label className="mb-1 block text-xs">Qty</Label>
                   <Input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    value={it.qty}
+                    className="text-right tabular-nums"
+                    value={it.qty === 0 ? "" : String(it.qty)}
+                    placeholder="0"
+                    onFocus={(e) => e.currentTarget.select()}
                     onChange={(e) => patchItem(idx, { qty: toNumber(e.target.value) })}
                   />
                 </div>
-                <div className="md:col-span-1">
-                  <Label className="mb-1 block text-xs">Rate</Label>
+                <div className="md:col-span-2">
+                  <Label className="mb-1 block text-xs">Rate (₹)</Label>
                   <Input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    value={it.rate}
+                    className="text-right tabular-nums"
+                    value={it.rate === 0 ? "" : String(it.rate)}
+                    placeholder="0"
+                    onFocus={(e) => e.currentTarget.select()}
                     onChange={(e) => patchItem(idx, { rate: toNumber(e.target.value) })}
                   />
                 </div>
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Amount</Label>
                   <div className="flex h-9 items-center justify-end rounded-md border bg-background px-2 text-sm font-medium tabular-nums">
-                    {(toNumber(it.qty) * toNumber(it.rate)).toFixed(2)}
+                    {formatINR(toNumber(it.qty) * toNumber(it.rate))}
                   </div>
                 </div>
               </div>
