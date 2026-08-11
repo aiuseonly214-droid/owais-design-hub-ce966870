@@ -41,7 +41,7 @@ export type DocFormValues = {
 const emptyItem = (): DocItem => ({
   sr: 1,
   particular: "",
-  description: "",
+  description: null,
   unit: "Nos",
   qty: 1,
   rate: 0,
