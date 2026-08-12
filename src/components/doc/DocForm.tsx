@@ -66,7 +66,7 @@ export function DocForm({
   const [form, setForm] = useState<DocFormValues>({
     customer_id: "",
     date: todayISO(),
-    secondaryDate: kind === "quotation" ? addDaysISO(15) : addDaysISO(7),
+    secondaryDate: kind === "quotation" ? addDaysISO(15) : "",
     subject: "",
     discount: 0,
     terms: "",
@@ -76,15 +76,21 @@ export function DocForm({
   const [items, setItems] = useState<DocItem[]>(
     initialItems?.length ? initialItems : [emptyItem()],
   );
+  // Discount is captured as a percentage; the rupee value is derived from the subtotal.
+  const [discountPct, setDiscountPct] = useState(() => {
+    const sub = (initialItems ?? []).reduce((s, it) => s + toNumber(it.qty) * toNumber(it.rate), 0);
+    const amt = toNumber(initialDoc?.discount ?? 0);
+    return sub > 0 && amt > 0 ? Math.round((amt / sub) * 10000) / 100 : 0;
+  });
 
   const termsValue = form.terms || company?.default_terms || "";
 
   const totals = useMemo(() => {
     const subtotal = items.reduce((s, it) => s + toNumber(it.qty) * toNumber(it.rate), 0);
-    const discount = Math.min(toNumber(form.discount), subtotal);
-    const grand = subtotal - discount;
-    return { subtotal, discount, grand };
-  }, [items, form.discount]);
+    const pct = Math.min(Math.max(toNumber(discountPct), 0), 100);
+    const discount = Math.round(((subtotal * pct) / 100) * 100) / 100;
+    return { subtotal, discount, grand: subtotal - discount, pct };
+  }, [items, discountPct]);
 
   function patchItem(idx: number, patch: Partial<DocItem>) {
     setItems((prev) =>
@@ -101,6 +107,9 @@ export function DocForm({
     if (!form.customer_id) return toast.error("Please select a customer");
     const valid = items.filter((it) => it.particular.trim());
     if (!valid.length) return toast.error("Add at least one item with a particular");
+    if (valid.some((it) => toNumber(it.qty) <= 0 || toNumber(it.rate) <= 0)) {
+      return toast.error("Every item needs a quantity and a rate greater than zero");
+    }
 
     setSaving(true);
     try {
@@ -124,12 +133,13 @@ export function DocForm({
         navigate({ to: "/quotations/$id", params: { id } });
       } else {
         const id = await saveInvoice(
-          { ...base, due_date: form.secondaryDate || null, quotation_id: form.quotation_id ?? null } as any,
+          { ...base, due_date: null, quotation_id: form.quotation_id ?? null } as any,
           rows,
         );
         toast.success("Invoice saved");
         navigate({ to: "/invoices/$id", params: { id } });
       }
+
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not save");
     } finally {
