@@ -170,16 +170,17 @@ export function DocForm({
               onChange={(e) => setForm({ ...form, date: e.target.value })}
             />
           </div>
-          <div>
-            <Label className="mb-1.5 block">
-              {kind === "quotation" ? "Valid Till" : "Due Date"}
-            </Label>
-            <Input
-              type="date"
-              value={form.secondaryDate}
-              onChange={(e) => setForm({ ...form, secondaryDate: e.target.value })}
-            />
-          </div>
+          {kind === "quotation" && (
+            <div>
+              <Label className="mb-1.5 block">Valid Till</Label>
+              <Input
+                type="date"
+                value={form.secondaryDate}
+                onChange={(e) => setForm({ ...form, secondaryDate: e.target.value })}
+              />
+            </div>
+          )}
+
           <div className="lg:col-span-4">
             <Label className="mb-1.5 block">Status</Label>
             <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
