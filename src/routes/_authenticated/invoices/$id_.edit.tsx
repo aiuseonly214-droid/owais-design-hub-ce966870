@@ -41,7 +41,7 @@ function EditInvoice() {
           id: data.doc.id,
           customer_id: data.doc.customer_id,
           date: data.doc.date,
-          secondaryDate: data.doc.due_date ?? "",
+          secondaryDate: "",
           subject: data.doc.subject ?? "",
           discount: Number(data.doc.discount),
           terms: data.doc.terms ?? "",

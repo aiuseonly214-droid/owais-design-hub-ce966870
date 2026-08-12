@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
 import { DocForm } from "@/components/doc/DocForm";
 import { fetchQuotation } from "@/lib/crm";
-import { addDaysISO, todayISO } from "@/lib/format";
+import { todayISO } from "@/lib/format";
 
 type NewInvoiceSearch = { from?: string };
 
@@ -55,7 +55,7 @@ function NewInvoice() {
             ? {
                 customer_id: data.doc.customer_id,
                 date: todayISO(),
-                secondaryDate: addDaysISO(7),
+                secondaryDate: "",
                 subject: data.doc.subject ?? "",
                 discount: Number(data.doc.discount),
                 terms: data.doc.terms ?? "",
