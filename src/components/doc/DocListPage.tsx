@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ConfirmDelete } from "@/components/doc/ConfirmDelete";
 import { formatDate, formatINR } from "@/lib/format";
 
 export type DocListRow = {
@@ -35,6 +36,7 @@ export function DocListPage({
   onSearch,
   hrefFor,
   amountLabel = "Amount",
+  onDelete,
 }: {
   title: string;
   description: string;
@@ -45,6 +47,7 @@ export function DocListPage({
   onSearch: (v: string) => void;
   hrefFor: (id: string) => React.ReactNode;
   amountLabel?: string;
+  onDelete?: (id: string) => void;
 }) {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -81,7 +84,7 @@ export function DocListPage({
                   <TableHead>Customer</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">{amountLabel}</TableHead>
-                  <TableHead className="w-[80px]" />
+                  <TableHead className="w-[120px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -112,7 +115,16 @@ export function DocListPage({
                     <TableCell className="text-right tabular-nums">
                       {formatINR(r.amount)}
                     </TableCell>
-                    <TableCell className="text-right">{hrefFor(r.id)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-right">
+                      {hrefFor(r.id)}
+                      {onDelete && (
+                        <ConfirmDelete
+                          label={`Delete ${r.code}`}
+                          description="This permanently removes the document and everything linked to it."
+                          onConfirm={() => onDelete(r.id)}
+                        />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
