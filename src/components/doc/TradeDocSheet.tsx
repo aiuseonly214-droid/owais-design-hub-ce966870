@@ -133,7 +133,13 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
             </tr>
             {Number(doc.discount) > 0 && (
               <tr>
-                <td className="py-1 text-[#7A6A70]">Discount</td>
+                <td className="py-1 text-[#7A6A70]">
+                  Discount
+                  {Number(doc.subtotal) > 0
+                    ? ` (${(((Number(doc.discount) / Number(doc.subtotal)) * 100).toFixed(1)).replace(/\.0$/, "")}%)`
+                    : ""}
+                </td>
+
                 <td className="py-1 text-right font-medium">− ₹ {formatAmount(doc.discount)}</td>
               </tr>
             )}
