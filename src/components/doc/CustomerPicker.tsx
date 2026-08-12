@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { fetchCustomers, saveCustomer } from "@/lib/crm";
+import { isValidMobile, onlyDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /**
@@ -53,8 +54,9 @@ export function CustomerPicker({
   );
 
   async function createCustomer() {
-    if (!draft.name.trim() || !draft.mobile.trim()) {
-      return toast.error("Name and mobile are required");
+    if (!draft.name.trim()) return toast.error("Name is required");
+    if (!isValidMobile(draft.mobile)) {
+      return toast.error("Mobile must be 10 digits and start with 6-9");
     }
     setSaving(true);
     try {
