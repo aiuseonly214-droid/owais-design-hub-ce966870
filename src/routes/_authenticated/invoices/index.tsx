@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DocListPage } from "@/components/doc/DocListPage";
-import { fetchInvoices } from "@/lib/crm";
+import { fetchInvoices, deleteInvoice } from "@/lib/crm";
 
 export const Route = createFileRoute("/_authenticated/invoices/")({
   head: () => ({
@@ -20,14 +21,26 @@ export const Route = createFileRoute("/_authenticated/invoices/")({
 });
 
 function InvoicesList() {
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const { data = [], isLoading } = useQuery({
     queryKey: ["invoices", search],
     queryFn: () => fetchInvoices(search),
   });
 
+  const remove = useMutation({
+    mutationFn: deleteInvoice,
+    onSuccess: () => {
+      toast.success("Deleted");
+      qc.invalidateQueries({ queryKey: ["invoices"] });
+      qc.invalidateQueries({ queryKey: ["summary"] });
+    },
+    onError: (e: Error) => toast.error(e.message || "Could not delete"),
+  });
+
   return (
     <DocListPage
+      onDelete={(id) => remove.mutate(id)}
       title="Invoices"
       description="Bills raised against completed or ongoing work."
       newTo="/invoices/new"

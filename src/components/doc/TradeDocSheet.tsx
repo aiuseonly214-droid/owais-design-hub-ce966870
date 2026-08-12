@@ -28,8 +28,16 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
   { kind, company, customer, doc, items },
   ref,
 ) {
-  const secondaryLabel = kind === "QUOTATION" ? "Valid Till" : "Due Date";
   const numberLabel = kind === "QUOTATION" ? "Quotation No." : "Invoice No.";
+  const detailRows: [string, string | null | undefined][] = [
+    [numberLabel, doc.code],
+    ["Date", formatDate(doc.date)],
+  ];
+  // Invoices are payable on presentation, so no due date is shown.
+  if (kind === "QUOTATION") {
+    detailRows.push(["Valid Till", doc.secondaryDate ? formatDate(doc.secondaryDate) : "—"]);
+  }
+  detailRows.push(["Customer ID", customer?.code]);
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
@@ -49,13 +57,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         <div className="justify-self-end text-right">
           <InfoBlock
             heading="Details"
-            rows={[
-              [numberLabel, doc.code],
-              ["Date", formatDate(doc.date)],
-              [secondaryLabel, doc.secondaryDate ? formatDate(doc.secondaryDate) : "—"],
-              ["Customer ID", customer?.code],
-            ]}
+            rows={detailRows}
           />
+
         </div>
       </div>
 
@@ -129,7 +133,13 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
             </tr>
             {Number(doc.discount) > 0 && (
               <tr>
-                <td className="py-1 text-[#7A6A70]">Discount</td>
+                <td className="py-1 text-[#7A6A70]">
+                  Discount
+                  {Number(doc.subtotal) > 0
+                    ? ` (${(((Number(doc.discount) / Number(doc.subtotal)) * 100).toFixed(1)).replace(/\.0$/, "")}%)`
+                    : ""}
+                </td>
+
                 <td className="py-1 text-right font-medium">− ₹ {formatAmount(doc.discount)}</td>
               </tr>
             )}

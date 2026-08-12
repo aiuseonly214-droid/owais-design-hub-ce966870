@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DocListPage } from "@/components/doc/DocListPage";
-import { fetchReceipts } from "@/lib/crm";
+import { fetchReceipts, deleteReceipt } from "@/lib/crm";
 import { labelOf, PAYMENT_MODES } from "@/lib/options";
 
 export const Route = createFileRoute("/_authenticated/receipts/")({
@@ -21,14 +22,26 @@ export const Route = createFileRoute("/_authenticated/receipts/")({
 });
 
 function ReceiptsList() {
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const { data = [], isLoading } = useQuery({
     queryKey: ["receipts", search],
     queryFn: () => fetchReceipts(search),
   });
 
+  const remove = useMutation({
+    mutationFn: deleteReceipt,
+    onSuccess: () => {
+      toast.success("Deleted");
+      qc.invalidateQueries({ queryKey: ["receipts"] });
+      qc.invalidateQueries({ queryKey: ["summary"] });
+    },
+    onError: (e: Error) => toast.error(e.message || "Could not delete"),
+  });
+
   return (
     <DocListPage
+      onDelete={(id) => remove.mutate(id)}
       title="Receipts"
       description="Money received against invoices and projects."
       newTo="/receipts/new"

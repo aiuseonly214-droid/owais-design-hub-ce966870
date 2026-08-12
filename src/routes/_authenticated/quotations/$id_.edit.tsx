@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/AppShell";
 import { DocForm } from "@/components/doc/DocForm";
 import { fetchQuotation } from "@/lib/crm";
 
-export const Route = createFileRoute("/_authenticated/quotations/$id/edit")({
+export const Route = createFileRoute("/_authenticated/quotations/$id_/edit")({
   head: () => ({
     meta: [
       { title: "Edit quotation · Owais Interior Designer CRM" },

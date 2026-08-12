@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/AppShell";
 import { DocForm } from "@/components/doc/DocForm";
 import { fetchInvoice } from "@/lib/crm";
 
-export const Route = createFileRoute("/_authenticated/invoices/$id/edit")({
+export const Route = createFileRoute("/_authenticated/invoices/$id_/edit")({
   head: () => ({
     meta: [
       { title: "Edit invoice · Owais Interior Designer CRM" },
@@ -41,7 +41,7 @@ function EditInvoice() {
           id: data.doc.id,
           customer_id: data.doc.customer_id,
           date: data.doc.date,
-          secondaryDate: data.doc.due_date ?? "",
+          secondaryDate: "",
           subject: data.doc.subject ?? "",
           discount: Number(data.doc.discount),
           terms: data.doc.terms ?? "",

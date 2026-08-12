@@ -162,7 +162,27 @@ export async function saveCustomer(payload: Partial<Customer> & { id?: string })
   return data.id as string;
 }
 
+/**
+ * Delete a customer along with their whole paper trail (receipts, invoices,
+ * quotations and their line items), because the foreign keys are restrictive.
+ */
 export async function deleteCustomer(id: string) {
+  const { data: invs } = await db.from("invoices").select("id").eq("customer_id", id);
+  const { data: qts } = await db.from("quotations").select("id").eq("customer_id", id);
+  const invIds = (invs ?? []).map((r: any) => r.id);
+  const qtIds = (qts ?? []).map((r: any) => r.id);
+
+  await db.from("receipts").delete().eq("customer_id", id);
+  if (invIds.length) {
+    await db.from("invoice_items").delete().in("invoice_id", invIds);
+    const { error } = await db.from("invoices").delete().in("id", invIds);
+    if (error) throw error;
+  }
+  if (qtIds.length) {
+    await db.from("quotation_items").delete().in("quotation_id", qtIds);
+    const { error } = await db.from("quotations").delete().in("id", qtIds);
+    if (error) throw error;
+  }
   const { error } = await db.from("customers").delete().eq("id", id);
   if (error) throw error;
 }
@@ -226,6 +246,7 @@ export async function saveQuotation(doc: Partial<Quotation> & { id?: string }, i
 }
 
 export async function deleteQuotation(id: string) {
+  await db.from("quotation_items").delete().eq("quotation_id", id);
   const { error } = await db.from("quotations").delete().eq("id", id);
   if (error) throw error;
 }
@@ -286,6 +307,8 @@ export async function saveInvoice(doc: Partial<Invoice> & { id?: string }, items
 }
 
 export async function deleteInvoice(id: string) {
+  await db.from("receipts").delete().eq("invoice_id", id);
+  await db.from("invoice_items").delete().eq("invoice_id", id);
   const { error } = await db.from("invoices").delete().eq("id", id);
   if (error) throw error;
 }

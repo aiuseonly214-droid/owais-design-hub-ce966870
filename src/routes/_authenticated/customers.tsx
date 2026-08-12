@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ConfirmDelete } from "@/components/doc/ConfirmDelete";
+import { isValidMobile, onlyDigits } from "@/lib/format";
 import { deleteCustomer, fetchCustomers, saveCustomer, type Customer } from "@/lib/crm";
 
 export const Route = createFileRoute("/_authenticated/customers")({
@@ -69,7 +71,8 @@ function CustomersPage() {
       toast.success("Customer deleted");
       qc.invalidateQueries({ queryKey: ["customers"] });
     },
-    onError: () => toast.error("Cannot delete — this customer has linked documents"),
+    onError: (e: Error) =>
+      toast.error(e.message || "Could not delete this customer"),
   });
 
   return (
@@ -138,15 +141,11 @@ function CustomersPage() {
                       >
                         <Pencil className="size-4" />
                       </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="size-8 text-destructive"
-                        aria-label={`Delete ${c.name}`}
-                        onClick={() => remove.mutate(c.id)}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
+                      <ConfirmDelete
+                        label={`Delete ${c.name}`}
+                        description="This also deletes their quotations, invoices and receipts. This cannot be undone."
+                        onConfirm={() => remove.mutate(c.id)}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -169,16 +168,21 @@ function CustomersPage() {
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                 />
               </Field>
-              <Field label="Mobile *">
+              <Field label="Mobile * (10 digits)">
                 <Input
+                  inputMode="numeric"
+                  maxLength={10}
+                  placeholder="9876543210"
                   value={draft.mobile ?? ""}
-                  onChange={(e) => setDraft({ ...draft, mobile: e.target.value })}
+                  onChange={(e) => setDraft({ ...draft, mobile: onlyDigits(e.target.value) })}
                 />
               </Field>
               <Field label="Alternate mobile">
                 <Input
+                  inputMode="numeric"
+                  maxLength={10}
                   value={draft.alt_mobile ?? ""}
-                  onChange={(e) => setDraft({ ...draft, alt_mobile: e.target.value })}
+                  onChange={(e) => setDraft({ ...draft, alt_mobile: onlyDigits(e.target.value) })}
                 />
               </Field>
               <Field label="Email">
@@ -224,8 +228,12 @@ function CustomersPage() {
             <Button
               disabled={save.isPending}
               onClick={() => {
-                if (!draft?.name?.trim() || !draft?.mobile?.trim()) {
-                  return toast.error("Name and mobile are required");
+                if (!draft?.name?.trim()) return toast.error("Name is required");
+                if (!isValidMobile(draft?.mobile ?? "")) {
+                  return toast.error("Mobile must be 10 digits and start with 6-9");
+                }
+                if (draft.alt_mobile && !isValidMobile(draft.alt_mobile)) {
+                  return toast.error("Alternate mobile must be a valid 10-digit number");
                 }
                 save.mutate(draft);
               }}
