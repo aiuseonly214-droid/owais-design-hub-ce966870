@@ -144,12 +144,16 @@ export function CustomerPicker({
               />
             </div>
             <div>
-              <Label className="mb-1.5 block">Mobile *</Label>
+              <Label className="mb-1.5 block">Mobile * (10 digits)</Label>
               <Input
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="9876543210"
                 value={draft.mobile}
-                onChange={(e) => setDraft({ ...draft, mobile: e.target.value })}
+                onChange={(e) => setDraft({ ...draft, mobile: onlyDigits(e.target.value) })}
               />
             </div>
+
             <div>
               <Label className="mb-1.5 block">City</Label>
               <Input
