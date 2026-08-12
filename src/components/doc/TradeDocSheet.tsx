@@ -60,7 +60,6 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
             rows={detailRows}
           />
 
-          />
         </div>
       </div>
 
