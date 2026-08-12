@@ -3,25 +3,25 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
 import { DocForm } from "@/components/doc/DocForm";
-import { fetchInvoice } from "@/lib/crm";
+import { fetchQuotation } from "@/lib/crm";
 
-export const Route = createFileRoute("/_authenticated/invoices/$id/edit")({
+export const Route = createFileRoute("/_authenticated/quotations/$id_/edit")({
   head: () => ({
     meta: [
-      { title: "Edit invoice · Owais Interior Designer CRM" },
-      { name: "description", content: "Update line items, discount and terms on an invoice." },
-      { property: "og:title", content: "Edit invoice · Owais Interior Designer CRM" },
-      { property: "og:description", content: "Update an existing customer invoice." },
+      { title: "Edit quotation · Owais Interior Designer CRM" },
+      { name: "description", content: "Update line items, discount and terms on a quotation." },
+      { property: "og:title", content: "Edit quotation · Owais Interior Designer CRM" },
+      { property: "og:description", content: "Update an existing interior design quotation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: EditInvoice,
+  component: EditQuotation,
 });
 
-function EditInvoice() {
+function EditQuotation() {
   const { id } = Route.useParams();
-  const { data } = useQuery({ queryKey: ["invoice", id], queryFn: () => fetchInvoice(id) });
+  const { data } = useQuery({ queryKey: ["quotation", id], queryFn: () => fetchQuotation(id) });
 
   if (!data) {
     return (
@@ -35,18 +35,17 @@ function EditInvoice() {
     <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader title={`Edit ${data.doc.code}`} />
       <DocForm
-        kind="invoice"
+        kind="quotation"
         initialItems={data.items}
         initialDoc={{
           id: data.doc.id,
           customer_id: data.doc.customer_id,
           date: data.doc.date,
-          secondaryDate: data.doc.due_date ?? "",
+          secondaryDate: data.doc.valid_till ?? "",
           subject: data.doc.subject ?? "",
           discount: Number(data.doc.discount),
           terms: data.doc.terms ?? "",
           status: data.doc.status,
-          quotation_id: data.doc.quotation_id,
         }}
       />
     </div>
