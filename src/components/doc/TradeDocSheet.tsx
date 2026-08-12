@@ -28,8 +28,16 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
   { kind, company, customer, doc, items },
   ref,
 ) {
-  const secondaryLabel = kind === "QUOTATION" ? "Valid Till" : "Due Date";
   const numberLabel = kind === "QUOTATION" ? "Quotation No." : "Invoice No.";
+  const detailRows: [string, string | null | undefined][] = [
+    [numberLabel, doc.code],
+    ["Date", formatDate(doc.date)],
+  ];
+  // Invoices are payable on presentation, so no due date is shown.
+  if (kind === "QUOTATION") {
+    detailRows.push(["Valid Till", doc.secondaryDate ? formatDate(doc.secondaryDate) : "—"]);
+  }
+  detailRows.push(["Customer ID", customer?.code]);
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
@@ -49,12 +57,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         <div className="justify-self-end text-right">
           <InfoBlock
             heading="Details"
-            rows={[
-              [numberLabel, doc.code],
-              ["Date", formatDate(doc.date)],
-              [secondaryLabel, doc.secondaryDate ? formatDate(doc.secondaryDate) : "—"],
-              ["Customer ID", customer?.code],
-            ]}
+            rows={detailRows}
+          />
+
           />
         </div>
       </div>
