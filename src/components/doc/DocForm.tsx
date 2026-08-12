@@ -270,7 +270,7 @@ export function DocForm({
                     value={it.qty === 0 ? "" : String(it.qty)}
                     placeholder="0"
                     onFocus={(e) => e.currentTarget.select()}
-                    onChange={(e) => patchItem(idx, { qty: toNumber(e.target.value) })}
+                    onChange={(e) => patchItem(idx, { qty: toNumber(onlyNumeric(e.target.value)) })}
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -282,8 +282,9 @@ export function DocForm({
                     value={it.rate === 0 ? "" : String(it.rate)}
                     placeholder="0"
                     onFocus={(e) => e.currentTarget.select()}
-                    onChange={(e) => patchItem(idx, { rate: toNumber(e.target.value) })}
+                    onChange={(e) => patchItem(idx, { rate: toNumber(onlyNumeric(e.target.value)) })}
                   />
+
                 </div>
                 <div className="md:col-span-1">
                   <Label className="mb-1 block text-xs">Amount</Label>
