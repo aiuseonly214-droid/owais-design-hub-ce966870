@@ -323,19 +323,27 @@ export function DocForm({
             </div>
             <div className="flex items-center justify-between gap-4 text-sm">
               <Label htmlFor="discount" className="text-muted-foreground">
-                Discount (₹)
+                Discount (%)
               </Label>
               <Input
                 id="discount"
                 type="text"
                 inputMode="decimal"
                 placeholder="0"
-                className="w-36 text-right tabular-nums"
-                value={form.discount === 0 ? "" : String(form.discount)}
+                className="w-28 text-right tabular-nums"
+                value={discountPct === 0 ? "" : String(discountPct)}
                 onFocus={(e) => e.currentTarget.select()}
-                onChange={(e) => setForm({ ...form, discount: toNumber(e.target.value) })}
+                onChange={(e) => {
+                  const n = toNumber(onlyNumeric(e.target.value));
+                  setDiscountPct(Math.min(Math.max(n, 0), 100));
+                }}
               />
             </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Discount amount</span>
+              <span className="font-medium tabular-nums">− {formatINR(totals.discount)}</span>
+            </div>
+
             <div className="flex items-center justify-between rounded-md bg-primary px-3 py-2.5 text-primary-foreground">
               <span className="text-sm font-semibold">Grand Total</span>
               <span className="font-display text-lg tabular-nums">{formatINR(totals.grand)}</span>
