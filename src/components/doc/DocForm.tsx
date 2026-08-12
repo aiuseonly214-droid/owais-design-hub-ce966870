@@ -23,7 +23,7 @@ import {
   type DocItem,
 } from "@/lib/crm";
 import { INVOICE_STATUS, QUOTATION_STATUS, UNITS } from "@/lib/options";
-import { addDaysISO, amountInWords, formatINR, toNumber, todayISO } from "@/lib/format";
+import { addDaysISO, amountInWords, formatINR, onlyNumeric, toNumber, todayISO } from "@/lib/format";
 
 
 export type DocFormValues = {

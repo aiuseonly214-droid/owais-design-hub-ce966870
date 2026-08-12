@@ -115,3 +115,20 @@ export function toNumber(value: unknown): number {
   const n = typeof value === "number" ? value : parseFloat(String(value ?? ""));
   return Number.isFinite(n) ? n : 0;
 }
+
+/** Keep only digits and a single decimal point — blocks letters in numeric fields. */
+export function onlyNumeric(v: string): string {
+  const cleaned = v.replace(/[^\d.]/g, "");
+  const [head, ...rest] = cleaned.split(".");
+  return rest.length ? `${head}.${rest.join("")}` : (head ?? "");
+}
+
+/** Keep only digits, capped to `max` characters — used for mobile numbers. */
+export function onlyDigits(v: string, max = 10): string {
+  return v.replace(/\D/g, "").slice(0, max);
+}
+
+/** A 10-digit Indian mobile number starting 6-9. */
+export function isValidMobile(v: string): boolean {
+  return /^[6-9]\d{9}$/.test(v);
+}
