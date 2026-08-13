@@ -88,11 +88,12 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
       onclone: (_doc, clone) => {
         // Force the brand colours onto the clone so a missed style never
         // leaves the letterhead / table header blank white in the export.
-        clone.querySelectorAll<HTMLElement>("[style*='6B1024']").forEach((n) => {
-          n.style.setProperty("background-color", "#6B1024", "important");
-          n.style.setProperty("color", "#FFF8F0", "important");
+        clone.querySelectorAll<HTMLElement>("[style*='123A70']").forEach((n) => {
+          n.style.setProperty("background-color", "#123A70", "important");
+          n.style.setProperty("color", "#FFFFFF", "important");
           n.style.setProperty("-webkit-print-color-adjust", "exact");
         });
+
       },
     });
   } finally {
