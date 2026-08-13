@@ -70,6 +70,11 @@ function Dashboard() {
       />
 
       <div className="mb-6 flex flex-wrap gap-2">
+        <Button asChild size="sm" variant="outline">
+          <Link to="/inquiries">
+            <Plus className="size-4" /> New Inquiry
+          </Link>
+        </Button>
         <Button asChild size="sm">
           <Link to="/quotations/new">
             <Plus className="size-4" /> New Quotation
@@ -92,7 +97,7 @@ function Dashboard() {
         </Button>
       </div>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(({ label, value, icon: Icon }) => (
           <Card key={label}>
             <CardContent className="flex items-center gap-4 pt-6">
