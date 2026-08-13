@@ -111,10 +111,10 @@ function InquiriesPage() {
 
   const convert = useMutation({
     mutationFn: convertInquiry,
-    onSuccess: (customerId) => {
+    onSuccess: () => {
       refresh();
       toast.success("Converted — customer created, now raise the quotation");
-      navigate({ to: "/quotations/new", search: { customer: customerId } as never });
+      navigate({ to: "/quotations/new" });
     },
     onError: (e: Error) => toast.error(e.message),
   });
