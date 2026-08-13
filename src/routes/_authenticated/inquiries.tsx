@@ -238,7 +238,7 @@ function InquiriesPage() {
                           <Pencil className="size-4" />
                         </Button>
                         <ConfirmDelete
-                          title={`Delete ${i.code}?`}
+                          label={`${i.code} — ${i.name}`}
                           description="This inquiry record will be permanently removed."
                           onConfirm={() => remove.mutate(i.id)}
                         />
