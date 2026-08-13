@@ -113,6 +113,84 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiries: {
+        Row: {
+          budget: number
+          city: string | null
+          code: string
+          converted_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          follow_up_date: string | null
+          id: string
+          mobile: string
+          name: string
+          notes: string | null
+          quotation_id: string | null
+          requirement: string | null
+          service: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          budget?: number
+          city?: string | null
+          code?: string
+          converted_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          follow_up_date?: string | null
+          id?: string
+          mobile: string
+          name: string
+          notes?: string | null
+          quotation_id?: string | null
+          requirement?: string | null
+          service?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          budget?: number
+          city?: string | null
+          code?: string
+          converted_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          follow_up_date?: string | null
+          id?: string
+          mobile?: string
+          name?: string
+          notes?: string | null
+          quotation_id?: string | null
+          requirement?: string | null
+          service?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inquiries_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           amount: number
