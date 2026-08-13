@@ -397,3 +397,105 @@ export async function fetchSummary() {
     outstanding: Math.max(0, invoiced - received),
   };
 }
+
+/* ---------------- inquiries ---------------- */
+
+export type Inquiry = {
+  id: string;
+  code: string;
+  name: string;
+  mobile: string;
+  city: string | null;
+  source: string;
+  service: string | null;
+  requirement: string | null;
+  budget: number;
+  status: string;
+  follow_up_date: string | null;
+  notes: string | null;
+  customer_id: string | null;
+  quotation_id: string | null;
+  converted_at: string | null;
+  created_at: string;
+};
+
+export async function fetchInquiries(search = ""): Promise<Inquiry[]> {
+  let q = db.from("inquiries").select("*").order("created_at", { ascending: false });
+  if (search.trim()) {
+    const s = `%${search.trim()}%`;
+    q = q.or(`name.ilike.${s},mobile.ilike.${s},code.ilike.${s},city.ilike.${s}`);
+  }
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as Inquiry[];
+}
+
+export async function saveInquiry(payload: Partial<Inquiry> & { id?: string }) {
+  const { id, code: _code, created_at: _ca, ...body } = payload as any;
+  if (body.status === "won" && !body.converted_at) body.converted_at = new Date().toISOString();
+  if (body.status && body.status !== "won") body.converted_at = null;
+
+  if (id) {
+    const { error } = await db.from("inquiries").update(body).eq("id", id);
+    if (error) throw error;
+    return id as string;
+  }
+  const { data, error } = await db
+    .from("inquiries")
+    .insert({ ...body, created_by: await currentUserId() })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id as string;
+}
+
+export async function deleteInquiry(id: string) {
+  const { error } = await db.from("inquiries").delete().eq("id", id);
+  if (error) throw error;
+}
+
+/**
+ * Turn an inquiry into a customer record so a quotation can be raised,
+ * and mark the inquiry as won.
+ */
+export async function convertInquiry(inq: Inquiry): Promise<string> {
+  let customerId = inq.customer_id;
+  if (!customerId) {
+    customerId = await saveCustomer({
+      name: inq.name,
+      mobile: inq.mobile,
+      city: inq.city ?? undefined,
+      site_address: inq.requirement ?? undefined,
+      notes: `From inquiry ${inq.code}`,
+    });
+  }
+  await saveInquiry({
+    id: inq.id,
+    customer_id: customerId,
+    status: "won",
+    converted_at: new Date().toISOString(),
+  } as any);
+  return customerId as string;
+}
+
+/** Inquiry funnel numbers for the dashboard. */
+export async function fetchInquiryStats() {
+  const { data, error } = await db.from("inquiries").select("status,budget");
+  if (error) throw error;
+  const rows = (data ?? []) as Array<{ status: string; budget: number }>;
+  const total = rows.length;
+  const won = rows.filter((r) => r.status === "won").length;
+  const lost = rows.filter((r) => r.status === "lost").length;
+  const open = total - won - lost;
+  const pipeline = rows
+    .filter((r) => r.status !== "won" && r.status !== "lost")
+    .reduce((s, r) => s + Number(r.budget || 0), 0);
+  return {
+    total,
+    won,
+    lost,
+    open,
+    pipeline,
+    conversion: total ? Math.round((won / total) * 1000) / 10 : 0,
+  };
+}

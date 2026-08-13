@@ -4,6 +4,7 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  MessageSquarePlus,
   Menu,
   Receipt as ReceiptIcon,
   ScrollText,
@@ -19,6 +20,7 @@ import { useRole, useSession } from "@/hooks/use-session";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/inquiries", label: "Inquiries", icon: MessageSquarePlus },
   { to: "/customers", label: "Customers", icon: Users },
   { to: "/quotations", label: "Quotations", icon: ScrollText },
   { to: "/invoices", label: "Invoices", icon: FileText },

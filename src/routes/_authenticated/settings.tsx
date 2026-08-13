@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchCompany, updateCompany, type CompanyProfile } from "@/lib/crm";
-import { fileToDataUrl } from "@/lib/image";
+import { fileToDataUrl, removeWhiteBackground } from "@/lib/image";
 import { useRole, useSession } from "@/hooks/use-session";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -61,7 +61,12 @@ function SettingsPage() {
   async function pick(field: "logo_url" | "stamp_url" | "signature_url", file?: File | null) {
     if (!file || !form) return;
     try {
-      const url = await fileToDataUrl(file, 600);
+      // Stamps and signatures are scanned on paper — knock the white out so
+      // they sit like real ink on the letterhead.
+      const url =
+        field === "logo_url"
+          ? await fileToDataUrl(file, 600)
+          : await removeWhiteBackground(file, 600);
       setForm({ ...form, [field]: url });
       toast.success("Image ready — press Save to apply");
     } catch {

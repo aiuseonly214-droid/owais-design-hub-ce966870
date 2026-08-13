@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import type { CompanyProfile, Customer, DocItem } from "@/lib/crm";
 import { formatAmount, formatDate } from "@/lib/format";
 import { DocFooter, DocHeader, DocTitleBar, InfoBlock } from "./DocChrome";
+import { DOC } from "@/lib/branding";
 
 export type TradeDoc = {
   code: string;
@@ -64,32 +65,32 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       </div>
 
       {doc.subject && (
-        <p className="px-10 pt-4 text-[12px]">
-          <span className="text-[#7A6A70]">Subject: </span>
-          <span className="font-medium text-[#241318]">{doc.subject}</span>
+        <p className="px-10 pt-4 text-[13px]">
+          <span className="text-[#5A6B80]">Subject: </span>
+          <span className="font-medium text-[#12233A]">{doc.subject}</span>
         </p>
       )}
 
       <div className="px-10 pt-5">
-        <table className="w-full border-collapse text-[11.5px]">
+        <table className="w-full border-collapse text-[12.5px]">
           <thead>
-            <tr style={{ backgroundColor: "#6B1024", color: "#FFF8F0" }}>
-              <th className="w-[38px] border border-[#6B1024] px-2 py-2 text-center font-semibold">
+            <tr style={{ backgroundColor: DOC.primary, color: DOC.primaryText }}>
+              <th className="w-[38px] border border-[#123A70] px-2 py-2 text-center font-semibold">
                 Sr
               </th>
-              <th className="border border-[#6B1024] px-2 py-2 text-left font-semibold">
+              <th className="border border-[#123A70] px-2 py-2 text-left font-semibold">
                 Particular
               </th>
-              <th className="w-[58px] border border-[#6B1024] px-2 py-2 text-center font-semibold">
+              <th className="w-[58px] border border-[#123A70] px-2 py-2 text-center font-semibold">
                 Unit
               </th>
-              <th className="w-[54px] border border-[#6B1024] px-2 py-2 text-center font-semibold">
+              <th className="w-[54px] border border-[#123A70] px-2 py-2 text-center font-semibold">
                 Qty
               </th>
-              <th className="w-[82px] border border-[#6B1024] px-2 py-2 text-right font-semibold">
+              <th className="w-[82px] border border-[#123A70] px-2 py-2 text-right font-semibold">
                 Rate
               </th>
-              <th className="w-[96px] border border-[#6B1024] px-2 py-2 text-right font-semibold">
+              <th className="w-[96px] border border-[#123A70] px-2 py-2 text-right font-semibold">
                 Amount
               </th>
             </tr>
@@ -97,25 +98,25 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
           <tbody>
             {items.length === 0 && (
               <tr>
-                <td colSpan={6} className="border border-[#E0D3D6] px-2 py-6 text-center text-[#7A6A70]">
+                <td colSpan={6} className="border border-[#CBD9EA] px-2 py-6 text-center text-[#5A6B80]">
                   No items added
                 </td>
               </tr>
             )}
             {items.map((it, idx) => (
-              <tr key={idx} style={{ backgroundColor: idx % 2 ? "#FBF7F2" : "#FFFFFF" }}>
-                <td className="border border-[#E0D3D6] px-2 py-2 text-center align-top">{idx + 1}</td>
-                <td className="border border-[#E0D3D6] px-2 py-2 align-top">
-                  <span className="font-medium text-[#241318]">{it.particular}</span>
+              <tr key={idx} style={{ backgroundColor: idx % 2 ? "#F7FAFD" : "#FFFFFF" }}>
+                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{idx + 1}</td>
+                <td className="border border-[#CBD9EA] px-2 py-2 align-top">
+                  <span className="font-medium text-[#12233A]">{it.particular}</span>
                 </td>
-                <td className="border border-[#E0D3D6] px-2 py-2 text-center align-top">
+                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">
                   {it.unit || "—"}
                 </td>
-                <td className="border border-[#E0D3D6] px-2 py-2 text-center align-top">{it.qty}</td>
-                <td className="border border-[#E0D3D6] px-2 py-2 text-right align-top">
+                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{it.qty}</td>
+                <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top">
                   {formatAmount(it.rate)}
                 </td>
-                <td className="border border-[#E0D3D6] px-2 py-2 text-right align-top font-medium">
+                <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top font-medium">
                   {formatAmount(it.amount)}
                 </td>
               </tr>
@@ -125,15 +126,15 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       </div>
 
       <div className="flex justify-end px-10 pt-4">
-        <table className="w-[280px] text-[12px]">
+        <table className="w-[280px] text-[13px]">
           <tbody>
             <tr>
-              <td className="py-1 text-[#7A6A70]">Sub Total</td>
+              <td className="py-1 text-[#5A6B80]">Sub Total</td>
               <td className="py-1 text-right font-medium">₹ {formatAmount(doc.subtotal)}</td>
             </tr>
             {Number(doc.discount) > 0 && (
               <tr>
-                <td className="py-1 text-[#7A6A70]">
+                <td className="py-1 text-[#5A6B80]">
                   Discount
                   {Number(doc.subtotal) > 0
                     ? ` (${(((Number(doc.discount) / Number(doc.subtotal)) * 100).toFixed(1)).replace(/\.0$/, "")}%)`
@@ -145,13 +146,13 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
             )}
             <tr>
               <td
-                style={{ backgroundColor: "#6B1024", color: "#FFF8F0" }}
+                style={{ backgroundColor: DOC.primary, color: DOC.primaryText }}
                 className="px-2 py-2 font-semibold"
               >
                 Grand Total
               </td>
               <td
-                style={{ backgroundColor: "#6B1024", color: "#FFF8F0" }}
+                style={{ backgroundColor: DOC.primary, color: DOC.primaryText }}
                 className="px-2 py-2 text-right font-semibold"
               >
                 ₹ {formatAmount(doc.grand_total)}
@@ -162,22 +163,22 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       </div>
 
       <div
-        style={{ backgroundColor: "#FBF3E4", borderColor: "#E5D7B8" }}
-        className="mx-10 mt-4 border px-3 py-2 text-[11.5px]"
+        style={{ backgroundColor: "#EEF4FB", borderColor: DOC.border }}
+        className="mx-10 mt-4 border px-3 py-2 text-[12.5px]"
       >
-        <span className="text-[#7A6A70]">Amount in words: </span>
-        <span className="font-medium text-[#241318]">{doc.amount_words || "—"}</span>
+        <span className="text-[#5A6B80]">Amount in words: </span>
+        <span className="font-medium text-[#12233A]">{doc.amount_words || "—"}</span>
       </div>
 
       {doc.terms && (
         <div className="px-10 pt-5">
           <p
-            style={{ color: "#6B1024" }}
-            className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em]"
+            style={{ color: DOC.primary }}
+            className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
           >
             Terms &amp; Conditions
           </p>
-          <p className="whitespace-pre-line text-[10.5px] leading-[1.7] text-[#5A4A50]">
+          <p className="whitespace-pre-line text-[11.5px] leading-[1.7] text-[#3C4C60]">
             {doc.terms}
           </p>
         </div>

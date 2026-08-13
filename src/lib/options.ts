@@ -47,3 +47,36 @@ export function labelOf(
 ): string {
   return list.find((o) => o.value === value)?.label ?? value;
 }
+
+export const INQUIRY_SOURCES = [
+  { value: "walk_in", label: "Walk-in" },
+  { value: "reference", label: "Reference" },
+  { value: "whatsapp", label: "WhatsApp" },
+  { value: "call", label: "Phone Call" },
+  { value: "instagram", label: "Instagram" },
+  { value: "facebook", label: "Facebook" },
+  { value: "google", label: "Google / Website" },
+  { value: "other", label: "Other" },
+] as const;
+
+export const INQUIRY_STATUS = [
+  { value: "new", label: "New" },
+  { value: "contacted", label: "Contacted" },
+  { value: "quoted", label: "Quotation Sent" },
+  { value: "won", label: "Converted (Won)" },
+  { value: "lost", label: "Lost" },
+] as const;
+
+export const SERVICES = [
+  "Interior Design",
+  "False Ceiling",
+  "POP Work",
+  "Modular Kitchen",
+  "Wardrobe",
+  "Furniture",
+  "Painting",
+  "Flooring",
+  "Electrical",
+  "Renovation",
+  "Other",
+] as const;
