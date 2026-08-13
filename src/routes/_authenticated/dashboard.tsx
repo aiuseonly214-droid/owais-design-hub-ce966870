@@ -1,10 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Plus, Receipt as ReceiptIcon, ScrollText, Users } from "lucide-react";
+import {
+  FileText,
+  Plus,
+  Receipt as ReceiptIcon,
+  ScrollText,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchInvoices, fetchQuotations, fetchReceipts, fetchSummary } from "@/lib/crm";
+import {
+  fetchInquiryStats,
+  fetchInvoices,
+  fetchQuotations,
+  fetchReceipts,
+  fetchSummary,
+} from "@/lib/crm";
 import { formatDate, formatINR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -26,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { data: s } = useQuery({ queryKey: ["summary"], queryFn: fetchSummary });
+  const { data: inq } = useQuery({ queryKey: ["inquiry-stats"], queryFn: fetchInquiryStats });
   const { data: quotations = [] } = useQuery({
     queryKey: ["quotations", ""],
     queryFn: () => fetchQuotations(""),
@@ -40,6 +54,8 @@ function Dashboard() {
   });
 
   const cards = [
+    { label: "Inquiries", value: String(inq?.total ?? 0), icon: Users },
+    { label: "Conversion", value: `${inq?.conversion ?? 0}%`, icon: TrendingUp },
     { label: "Customers", value: String(s?.customers ?? 0), icon: Users },
     { label: "Quotations", value: String(s?.quotations ?? 0), icon: ScrollText },
     { label: "Invoiced", value: formatINR(s?.invoiced ?? 0), icon: FileText },
