@@ -499,3 +499,154 @@ export async function fetchInquiryStats() {
     conversion: total ? Math.round((won / total) * 1000) / 10 : 0,
   };
 }
+
+/* ---------------- outstanding / receivables ---------------- */
+
+export type OutstandingInvoice = {
+  id: string;
+  code: string;
+  date: string;
+  due_date: string | null;
+  total: number;
+  paid: number;
+  balance: number;
+  status: "paid" | "partial" | "unpaid";
+  overdue: boolean;
+};
+
+export type OutstandingCustomer = {
+  customer_id: string;
+  code: string;
+  name: string;
+  mobile: string;
+  city: string | null;
+  total: number;
+  paid: number;
+  balance: number;
+  pendingCount: number;
+  advance: number;
+  oldestDue: string | null;
+  invoices: OutstandingInvoice[];
+};
+
+/** Effective due date: the stored one, else 15 days after the invoice date. */
+function effectiveDue(inv: { date: string; due_date: string | null }): string {
+  if (inv.due_date) return inv.due_date;
+  const d = new Date(inv.date);
+  d.setDate(d.getDate() + 15);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Customer-wise receivables built purely from live invoice + receipt rows.
+ * Receipts booked against an invoice settle that invoice first; anything
+ * received without an invoice link is applied oldest-invoice-first, and
+ * whatever is left over is reported as an advance.
+ */
+export async function fetchOutstanding(): Promise<OutstandingCustomer[]> {
+  const [{ data: invRows, error: e1 }, { data: recRows, error: e2 }, { data: custRows, error: e3 }] =
+    await Promise.all([
+      db.from("invoices").select("id,code,date,due_date,grand_total,customer_id").order("date"),
+      db.from("receipts").select("customer_id,invoice_id,amount_received"),
+      db.from("customers").select("id,code,name,mobile,city"),
+    ]);
+  if (e1) throw e1;
+  if (e2) throw e2;
+  if (e3) throw e3;
+
+  const customers = new Map<string, any>((custRows ?? []).map((c: any) => [c.id, c]));
+  const today = todayISO();
+
+  // paid-per-invoice from linked receipts
+  const linked = new Map<string, number>();
+  const loose = new Map<string, number>();
+  for (const r of (recRows ?? []) as any[]) {
+    const amt = Number(r.amount_received || 0);
+    if (!amt) continue;
+    if (r.invoice_id) linked.set(r.invoice_id, (linked.get(r.invoice_id) ?? 0) + amt);
+    else if (r.customer_id) loose.set(r.customer_id, (loose.get(r.customer_id) ?? 0) + amt);
+  }
+
+  const byCustomer = new Map<string, OutstandingCustomer>();
+  for (const inv of (invRows ?? []) as any[]) {
+    const c = customers.get(inv.customer_id);
+    let bucket = byCustomer.get(inv.customer_id);
+    if (!bucket) {
+      bucket = {
+        customer_id: inv.customer_id,
+        code: c?.code ?? "—",
+        name: c?.name ?? "Unknown customer",
+        mobile: c?.mobile ?? "",
+        city: c?.city ?? null,
+        total: 0,
+        paid: 0,
+        balance: 0,
+        pendingCount: 0,
+        advance: 0,
+        oldestDue: null,
+        invoices: [],
+      };
+      byCustomer.set(inv.customer_id, bucket);
+    }
+    const total = Number(inv.grand_total || 0);
+    const paid = Math.min(linked.get(inv.id) ?? 0, total);
+    bucket.invoices.push({
+      id: inv.id,
+      code: inv.code,
+      date: inv.date,
+      due_date: inv.due_date,
+      total,
+      paid,
+      balance: Math.max(0, total - paid),
+      status: "unpaid",
+      overdue: false,
+    });
+  }
+
+  const out: OutstandingCustomer[] = [];
+  for (const bucket of byCustomer.values()) {
+    // apply unlinked receipts oldest invoice first
+    let pool = loose.get(bucket.customer_id) ?? 0;
+    for (const inv of bucket.invoices) {
+      if (pool <= 0) break;
+      const take = Math.min(pool, inv.balance);
+      inv.paid += take;
+      inv.balance -= take;
+      pool -= take;
+    }
+    bucket.advance = Math.round(pool * 100) / 100;
+
+    for (const inv of bucket.invoices) {
+      inv.paid = Math.round(inv.paid * 100) / 100;
+      inv.balance = Math.round(inv.balance * 100) / 100;
+      inv.status = inv.balance <= 0.5 ? "paid" : inv.paid > 0 ? "partial" : "unpaid";
+      inv.overdue = inv.status !== "paid" && effectiveDue(inv) < today;
+      bucket.total += inv.total;
+      bucket.paid += inv.paid;
+      bucket.balance += inv.balance;
+      if (inv.status !== "paid") {
+        bucket.pendingCount += 1;
+        const due = effectiveDue(inv);
+        if (!bucket.oldestDue || due < bucket.oldestDue) bucket.oldestDue = due;
+      }
+    }
+    bucket.total = Math.round(bucket.total * 100) / 100;
+    bucket.paid = Math.round(bucket.paid * 100) / 100;
+    bucket.balance = Math.round(bucket.balance * 100) / 100;
+    bucket.invoices.sort((a, b) => (a.date < b.date ? 1 : -1));
+    out.push(bucket);
+  }
+
+  out.sort((a, b) => b.balance - a.balance);
+  return out;
+}
+
+/** Amount already received against a single invoice (linked receipts only). */
+export async function fetchInvoicePaid(invoiceId: string): Promise<number> {
+  const { data, error } = await db
+    .from("receipts")
+    .select("amount_received")
+    .eq("invoice_id", invoiceId);
+  if (error) throw error;
+  return (data ?? []).reduce((s: number, r: any) => s + Number(r.amount_received || 0), 0);
+}
