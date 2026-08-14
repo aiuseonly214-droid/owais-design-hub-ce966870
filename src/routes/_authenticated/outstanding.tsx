@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronRight, IndianRupee, Search } from "lucide-react";
@@ -181,9 +181,8 @@ function OutstandingPage() {
                 {rows.map((c) => {
                   const isOpen = !!open[c.customer_id];
                   return (
-                    <>
+                    <Fragment key={c.customer_id}>
                       <tr
-                        key={c.customer_id}
                         className="cursor-pointer border-t transition-colors hover:bg-muted/40"
                         onClick={() =>
                           setOpen((p) => ({ ...p, [c.customer_id]: !p[c.customer_id] }))
@@ -227,7 +226,7 @@ function OutstandingPage() {
                       </tr>
 
                       {isOpen && (
-                        <tr key={`${c.customer_id}-detail`} className="border-t bg-muted/20">
+                        <tr className="border-t bg-muted/20">
                           <td colSpan={7} className="px-3 py-3">
                             <table className="w-full text-xs">
                               <thead className="text-left uppercase tracking-wide text-muted-foreground">
@@ -286,7 +285,7 @@ function OutstandingPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
