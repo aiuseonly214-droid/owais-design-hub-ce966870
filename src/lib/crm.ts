@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { todayISO } from "@/lib/format";
 
 export type Role = "admin" | "employee";
 
@@ -303,6 +304,8 @@ export async function saveInvoice(doc: Partial<Invoice> & { id?: string }, items
     const { error } = await db.from("invoice_items").insert(rows);
     if (error) throw error;
   }
+  // Totals may have moved, so the paid/partial/unpaid flag has to follow.
+  await syncInvoiceStatus(id as string);
   return id as string;
 }
 
