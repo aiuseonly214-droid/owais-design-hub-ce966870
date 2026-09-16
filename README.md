@@ -1,591 +1,182 @@
-# Owais CRM Hub
-
-Ye document waise likha hai jaise kisi software company me Software Requirement Specification (SRS) banayi jati hai. Isko padhkar koi bhi developer ya AI samajh jayega ki CRM me kya banana hai.
-
-OWAIS INTERIOR DESIGNER CRM
-
-Software Requirement Specification (SRS) - Version 1.0
-
-Project Name
-
-Owais Interior Designer CRM
-
-Project Purpose
-
-Ek professional web-based CRM jo Owais Interior Designer ke daily business operations ko digital banaye. Iska main objective hai customer management, quotation generation, payment tracking, receipt generation aur project management ko ek hi platform par lana.
-
-Target Users
-
-Admin
-
-Owner
-
-Full Access
-
-Staff
-
-Limited Access
-
-Customer Management
-
-Quotation
-
-Receipt
-
-Project Updates
-
-Core Modules
-
-1. Authentication
-
-Login
-
-Username
-
-Password
-
-Remember Me
-
-Forgot Password
-
-Logout
-
-2. Dashboard
-
-Dashboard should display business summary.
-
-Widgets
-
-Total Customers
-
-New Customers
-
-Active Projects
-
-Completed Projects
-
-Pending Projects
-
-Total Quotations
-
-Total Receipts
-
-Pending Payments
-
-Monthly Revenue
-
-Recent Customers
-
-Recent Quotations
-
-Recent Receipts
-
-Charts
-
-Monthly Revenue
-
-Projects Status
-
-Quick Buttons
-
-Add Customer
-
-Create Quotation
-
-Create Receipt
-
-3. Customer Management
-
-Customer Details
-
-Customer ID (Auto)
-
-Customer Name
-
-Mobile Number
-
-Alternate Number
-
-Email
-
-Site Address
-
-Billing Address
-
-City
-
-Notes
-
-Actions
-
-Add
-
-Edit
-
-Delete
-
-Search
-
-Filter
-
-Customer History
-
-All Quotations
-
-Payments
-
-Receipts
-
-Projects
-
-4. Quotation Management
-
-Generate professional quotation.
-
-Header
-
-Company Logo
-
-Company Name
-
-Tagline
-
-Address
-
-Mobile
-
-Email
-
-Quotation Information
-
-Quote Number (Auto)
-
-Date
-
-Valid Till
-
-Customer Information
-
-Customer Name
-
-Address
-
-Mobile
-
-Table
-
-Columns
-
-Sr No
-
-Particular
-
-Description
-
-Unit
-
-Qty
-
-Rate
-
-Amount
-
-Calculation
-
-Sub Total
-
-Discount
-
-GST (Optional)
-
-Grand Total
-
-Additional
-
-Amount in Words
-
-Terms & Conditions
-
-Authorized Signature
-
-Company Stamp
-
-Actions
-
-Save
-
-Preview
-
-Print
-
-Download PDF
-
-Duplicate
-
-Edit
-
-5. Receipt Management
-
-Generate payment receipt.
-
-Header
-
-Company Branding
-
-Receipt Information
-
-Receipt Number
-
-Date
-
-Customer Information
-
-Payment Details
-
-Total Amount
-
-Previous Paid
-
-Amount Received
-
-Balance Amount
-
-Payment Mode
-
-Cash
-
-UPI
-
-Bank
-
-Cheque
-
-Additional
-
-Transaction ID
-
-Amount in Words
-
-Footer
-
-Customer Signature
-
-Company Signature
-
-Actions
-
-Print
-
-PDF
-
-Edit
-
-6. Project Management
-
-Project Details
-
-Project ID
-
-Customer
-
-Project Name
-
-Site Address
-
-Start Date
-
-Expected Completion
-
-Status
-
-Status
-
-Not Started
-
-In Progress
-
-On Hold
-
-Completed
-
-Progress
-
-Percentage
-
-Upload
-
-Before Photos
-
-After Photos
-
-Notes
-
-7. Payment Management
-
-Track all payments.
-
-Fields
-
-Customer
-
-Total Project Amount
-
-Advance
-
-Remaining Balance
-
-Payment History
-
-Reports
-
-Pending Payments
-
-Fully Paid
-
-8. Company Profile
-
-Editable
-
-Company Logo
-
-Company Name
-
-Tagline
-
-Address
-
-Mobile
-
-Email
-
-Website
-
-GST Number
-
-Bank Details
-
-This information should automatically appear in Quotations and Receipts.
-
-9. Search
-
-Global Search
-
-Can search by
-
-Customer Name
-
-Mobile
-
-Quote Number
-
-Receipt Number
-
-10. Reports
-
-Reports
-
-Customer Report
-
-Quotation Report
-
-Receipt Report
-
-Project Report
-
-Payment Report
-
-Export
-
-PDF
-
-Excel
-
-11. Settings
-
-Settings
-
-Company Information
-
-Change Password
-
-GST Enable / Disable
-
-Currency
-
-Backup Database
-
-12. Notifications
-
-Dashboard Alerts
-
-Pending Payments
-
-Upcoming Projects
-
-Today's Follow-ups
-
-Workflow
-
-Login
-
-↓
-
-Dashboard
-
-↓
-
-Add Customer
-
-↓
-
-Create Quotation
-
-↓
-
-Quotation Approved
-
-↓
-
-Project Started
-
-↓
-
-Receive Payment
-
-↓
-
-Generate Receipt
-
-↓
-
-Update Project
-
-↓
-
-Project Completed
-
-↓
-
-Customer History Updated
-
-
-Automatic Numbering
-
-Customer
-
-CUS-0001
-
-Quotation
-
-QT-2026-0001
-
-Receipt
-
-RC-2026-0001
-
-Project
-
-PRJ-2026-0001
-
-User Interface
-
-Theme
-
-Premium Maroon
-
-Gold
-
-White
-
-Style
-
-Modern
-
-Professional
-
-Clean
-
-Fast
-
-Responsive
-
-Non-Functional Requirements
-
-Fast Loading
-
-Secure Login
-
-Responsive Design
-
-Mobile Friendly
-
-Print Friendly
-
-PDF Export
-
-Clean Navigation
-
-Easy to Learn
-
-Scalable Architecture
-
-Future Scope (Version 2)
-
-WhatsApp Integration
-
-Invoice Generator
-
-Employee Management
-
-Attendance
-
-Material Inventory
-
-Expense Tracking
-
-Profit & Loss Dashboard
-
-Customer Feedback
-
-Digital Signature
-
-SMS & Email Notifications
-
-Role-Based Permissions
-
-Analytics Dashboard
-
-Multi-Branch Support
-
-Cloud Backup
-
-AI Estimate Generator
-
-Multi-Language Support
-
-Final Goal
-
-Owais Interior Designer CRM ka objective sirf quotation aur receipt banana nahi hai, balki ek complete business management system develop karna hai jisse customer inquiry se lekar project completion aur payment collection tak ka pura workflow ek hi platform se manage ho sake. Version 1 ko lightweight, reliable aur production-ready rakha jayega, jabki architecture future expansion (Version 2, 3...) ko dhyan me rakhkar design ki jayegi. NOW TELL ME WHAT YOU REQUIRED FOR MAKING ALL THESE THINGS LIKE OFFICIAL LOGO SOME INFO ABOUT BUSINESS etc.
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://owais-design-hub.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b2ff8e0d-0184-422a-80de-a3dcc0790968).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+# Owais Interior Designer CRM
+
+A professional web-based CRM for **Owais Interior Designer** — from customer inquiry to quotation, invoice, and payment receipt, all in one platform.
+
+**Live app:** https://owais-design-hub.lovable.app
+
+| | |
+|---|---|
+| **Company** | Owais Interior Designer — "Turning your space into elegant design" |
+| **Address** | Rahmat Nagar, Wadala, Nashik, Maharashtra |
+| **Contact** | 7756043214 / 7721926290 · onlyw6469@gmail.com |
+| **Currency** | INR (₹) · No GST |
+| **Theme** | Navy Blue `#123A70` + Teal `#0E8F8C` + White |
+
+---
+
+## System Overview (Mind Map)
+
+```text
+                         OWAIS INTERIOR DESIGNER CRM
+                                    │
+        ┌─────────────┬─────────────┼─────────────┬──────────────┐
+        │             │             │             │              │
+     AUTH         CUSTOMERS     DOCUMENTS      MONEY TRACKING   SETTINGS
+        │             │             │             │              │
+   Admin login    Add / Edit    Quotations     Outstanding     Company profile
+   Employee login Search        Invoices       Customer-wise   Logo / Stamp /
+   Forgot pass    Auto code     Receipts       balances        Signature upload
+   Roles          History       Inquiries      Payment modes   Default terms
+                                (leads)        Paid / Partial  Change password
+```
+
+## Business Workflow
+
+```text
+ Inquiry ──convert──▶ Customer ──▶ Quotation ──approve──▶ Invoice ──pay──▶ Receipt
+ (lead)                CUS-0001     QT-2026-0001           INV-2026-0001   RC-2026-0001
+                                              │
+                                              └── option items possible
+                                                  (shown, but excluded from totals)
+```
+
+---
+
+## Features (Phase 1)
+
+### 1. Authentication & Roles
+- Email + password login, Remember me, Forgot password (reset link flow)
+- **Admin** — full access including Settings and user roles
+- **Employee** — can manage customers, documents, inquiries; blocked from settings
+
+### 2. Dashboard
+- Summary cards: customers, quotations, invoices, outstanding amount
+- Recent quotations / invoices / receipts
+- Quick actions: New Quotation, New Invoice, New Receipt, New Customer
+
+### 3. Customers
+- Auto code `CUS-0001`, name, 10-digit mobile, email, addresses, city, notes
+- Search by name / mobile / code / city
+- Delete with cascade confirm (only if you accept linked documents going too)
+
+### 4. Inquiries (Lead Tracking)
+- Record walk-ins, calls, WhatsApp, Instagram leads with source + service
+- Pipeline status: New → Contacted → Quotation Sent → Won / Lost
+- **Convert to Customer** in one click
+- Dashboard shows conversion rate — kitni inquiries se real business bana
+
+### 5. Quotations
+- Auto number `QT-2026-0001`, date, valid till, subject
+- Line items: Sr · Particular · Unit (dropdown) · Qty · Rate · Amount (auto)
+- **Optional items** — untick "Total me jodo" to show an option row that is
+  printed with an `OPTION` badge but excluded from totals (multiple options
+  for the same product)
+- **Optional totals** — untick "Document par totals dikhao" to print a clean
+  item-only document with no subtotal / discount / grand total
+- Discount in %, amount-in-words auto (Indian format), editable terms
+- Status: Draft / Sent / Approved / Rejected
+- Print + PDF (A4), Duplicate, **Convert to Invoice**
+
+### 6. Invoices
+- Auto number `INV-2026-0001`; create fresh or convert from a quotation
+- Same line-item editor, optional items and optional totals
+- Status auto-syncs: Unpaid / Partially Paid / Paid / Cancelled
+- Editable anytime — totals re-sync with payments
+- **Record Payment** → opens a pre-filled receipt
+
+### 7. Receipts
+- Auto number `RC-2026-0001`
+- Auto-pulls invoice total, previous paid, balance
+- Payment mode dropdown: Cash / UPI / Bank Transfer / Cheque / Card / Other
+- Amount in words auto-generated
+
+### 8. Outstanding Report
+- Customer-wise: total invoiced, paid, balance, pending invoice count
+- Invoice-wise expandable detail, search + filters (overdue, partial…)
+- FIFO settlement: receipts settle oldest pending invoices first
+
+### 9. Settings (Admin only)
+- Company profile, default terms & conditions
+- Logo, stamp, signature upload (stamp prints as a light watermark)
+- Change password
+
+---
+
+## A4 Document Template
+
+```text
+┌───────────────────────────────────────────────────────┐
+│  NAVY HEADER:  Logo │ Company name + tagline │ Contact │
+├───────────────────────────────────────────────────────┤
+│  Teal rule                                            │
+│  QUOTATION / INVOICE / RECEIPT   Code   Date          │
+│  Bill To: customer details                            │
+│ ┌────┬─────────────┬──────┬─────┬───────┬──────────┐ │
+│ │ Sr │ Particular  │ Unit │ Qty │ Rate  │  Amount  │ │
+│ └────┴─────────────┴──────┴─────┴───────┴──────────┘ │
+│                          Sub Total   ₹  ─── (hidden   │
+│                          Discount %  ₹    if totals   │
+│                          GRAND TOTAL ₹    toggled off)│
+│  Amount in words (italic teal)                        │
+│  Terms & Conditions (numbered)                        │
+│                  [stamp watermark]  Authorized Sign.  │
+└───────────────────────────────────────────────────────┘
+```
+
+---
+
+## Tech Stack
+
+- **Frontend:** TanStack Start (React 19) + Tailwind CSS v4 + shadcn/ui
+- **Backend:** Lovable Cloud (Postgres, Auth, Row Level Security)
+- **PDF:** jsPDF + html2canvas-pro from the A4 print DOM
+- **Routing:** file-based routes under `src/routes/`
+
+## Database Tables
+
+| Table | Purpose |
+|---|---|
+| `profiles` / `user_roles` | users + admin/employee roles (`has_role()`) |
+| `company_profile` | singleton business info + branding asset URLs |
+| `customers` | customer master with auto codes |
+| `inquiries` | leads with source, service, status pipeline |
+| `quotations` + `quotation_items` | quotes; items have `include_in_total` flag |
+| `invoices` + `invoice_items` | bills; status synced from receipts |
+| `receipts` | payments with mode, txn id, balance |
+
+Auto-numbering is handled by Postgres sequences — no manual entry needed.
+
+## Project Structure
+
+```text
+src/
+├── routes/
+│   ├── auth.tsx, reset-password.tsx        # public auth pages
+│   └── _authenticated/                     # protected area
+│       ├── dashboard.tsx                   # home
+│       ├── customers.tsx  inquiries.tsx  outstanding.tsx
+│       ├── quotations/  invoices/  receipts/   # list, new, $id, edit
+│       └── settings.tsx
+├── components/doc/                         # document system
+│   ├── DocForm.tsx                         # line-item builder
+│   ├── TradeDocSheet.tsx                   # A4 quotation/invoice layout
+│   ├── ReceiptSheet.tsx                    # A4 receipt layout
+│   └── CustomerPicker.tsx, DocActions.tsx, ConfirmDelete.tsx
+├── lib/                                    # crm.ts (data), pdf.ts, format.ts,
+│                                           # branding.ts, options.ts, image.ts
+└── integrations/supabase/                  # generated client (do not edit)
+```
+
+## Running Locally
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone <repo-url>
+cd <repo>
 npm i
 npm run dev
 ```
+
+---
+
+Built with [Lovable](https://lovable.dev). Continue developing in the
+[Lovable editor](https://lovable.dev/projects/b2ff8e0d-0184-422a-80de-a3dcc0790968).
