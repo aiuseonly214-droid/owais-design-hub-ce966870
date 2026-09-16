@@ -14,6 +14,8 @@ export type TradeDoc = {
   grand_total: number;
   amount_words: string | null;
   terms: string | null;
+  /** When false, totals and amount-in-words are hidden (option-list documents). */
+  show_totals?: boolean | null;
 };
 
 type Props = {
@@ -108,6 +110,11 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                 <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{idx + 1}</td>
                 <td className="border border-[#CBD9EA] px-2 py-2 align-top">
                   <span className="font-medium text-[#12233A]">{it.particular}</span>
+                  {it.include_in_total === false && (
+                    <span className="ml-2 rounded border border-[#CBD9EA] bg-[#EEF4FB] px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-[#5A6B80]">
+                      Option
+                    </span>
+                  )}
                 </td>
                 <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">
                   {it.unit || "—"}
@@ -125,6 +132,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         </table>
       </div>
 
+      {doc.show_totals !== false && (
       <div className="flex justify-end px-10 pt-4">
         <table className="w-[280px] text-[13px]">
           <tbody>
@@ -161,7 +169,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
           </tbody>
         </table>
       </div>
+      )}
 
+      {doc.show_totals !== false && (
       <div
         style={{ backgroundColor: "#EEF4FB", borderColor: DOC.border }}
         className="mx-10 mt-4 border px-3 py-2 text-[12.5px]"
@@ -169,6 +179,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         <span className="text-[#5A6B80]">Amount in words: </span>
         <span className="font-medium text-[#12233A]">{doc.amount_words || "—"}</span>
       </div>
+      )}
 
       {doc.terms && (
         <div className="px-10 pt-5">

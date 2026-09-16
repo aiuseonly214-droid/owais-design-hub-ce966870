@@ -35,6 +35,7 @@ export type DocFormValues = {
   discount: number;
   terms: string;
   status: string;
+  show_totals: boolean;
   quotation_id?: string | null;
 };
 
@@ -46,6 +47,7 @@ const emptyItem = (): DocItem => ({
   qty: 1,
   rate: 0,
   amount: 0,
+  include_in_total: true,
 });
 
 export function DocForm({
@@ -71,6 +73,7 @@ export function DocForm({
     discount: 0,
     terms: "",
     status: kind === "quotation" ? "draft" : "unpaid",
+    show_totals: true,
     ...initialDoc,
   });
   const [items, setItems] = useState<DocItem[]>(
@@ -86,7 +89,11 @@ export function DocForm({
   const termsValue = form.terms || company?.default_terms || "";
 
   const totals = useMemo(() => {
-    const subtotal = items.reduce((s, it) => s + toNumber(it.qty) * toNumber(it.rate), 0);
+    // Only rows flagged "in total" are summed; the rest are printed as options.
+    const subtotal = items.reduce(
+      (s, it) => (it.include_in_total === false ? s : s + toNumber(it.qty) * toNumber(it.rate)),
+      0,
+    );
     const pct = Math.min(Math.max(toNumber(discountPct), 0), 100);
     const discount = Math.round(((subtotal * pct) / 100) * 100) / 100;
     return { subtotal, discount, grand: subtotal - discount, pct };
@@ -124,6 +131,7 @@ export function DocForm({
         amount_words: amountInWords(totals.grand),
         terms: termsValue,
         status: form.status,
+        show_totals: form.show_totals,
       };
       const rows = valid.map((it, i) => ({ ...it, sr: i + 1, amount: toNumber(it.qty) * toNumber(it.rate) }));
 
@@ -221,8 +229,23 @@ export function DocForm({
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Item {idx + 1}
+                  {it.include_in_total === false && (
+                    <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] normal-case tracking-normal text-muted-foreground">
+                      Option — total me nahi judega
+                    </span>
+                  )}
                 </span>
-                <Button
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      className="size-3.5 accent-primary"
+                      checked={it.include_in_total !== false}
+                      onChange={(e) => patchItem(idx, { include_in_total: e.target.checked })}
+                    />
+                    Total me jodo
+                  </label>
+                  <Button
                   size="icon"
                   variant="ghost"
                   className="size-7 text-destructive"
@@ -231,7 +254,8 @@ export function DocForm({
                   aria-label={`Remove item ${idx + 1}`}
                 >
                   <Trash2 className="size-4" />
-                </Button>
+                  </Button>
+                </div>
               </div>
               <div className="grid gap-3 md:grid-cols-12">
                 <div className="md:col-span-5">
@@ -317,6 +341,20 @@ export function DocForm({
             <CardTitle className="text-base">Totals</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
+                checked={form.show_totals}
+                onChange={(e) => setForm({ ...form, show_totals: e.target.checked })}
+              />
+              <span>
+                Document par totals dikhao
+                <span className="block text-xs text-muted-foreground">
+                  Band karne par sirf item list print hogi — Sub Total / Grand Total nahi
+                </span>
+              </span>
+            </label>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Sub Total</span>
               <span className="font-medium tabular-nums">{formatINR(totals.subtotal)}</span>
