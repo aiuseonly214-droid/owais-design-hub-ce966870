@@ -341,6 +341,20 @@ export function DocForm({
             <CardTitle className="text-base">Totals</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
+                checked={form.show_totals}
+                onChange={(e) => setForm({ ...form, show_totals: e.target.checked })}
+              />
+              <span>
+                Document par totals dikhao
+                <span className="block text-xs text-muted-foreground">
+                  Band karne par sirf item list print hogi — Sub Total / Grand Total nahi
+                </span>
+              </span>
+            </label>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Sub Total</span>
               <span className="font-medium tabular-nums">{formatINR(totals.subtotal)}</span>
