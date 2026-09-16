@@ -35,6 +35,7 @@ export type DocFormValues = {
   discount: number;
   terms: string;
   status: string;
+  show_totals: boolean;
   quotation_id?: string | null;
 };
 
@@ -46,6 +47,7 @@ const emptyItem = (): DocItem => ({
   qty: 1,
   rate: 0,
   amount: 0,
+  include_in_total: true,
 });
 
 export function DocForm({
@@ -71,6 +73,7 @@ export function DocForm({
     discount: 0,
     terms: "",
     status: kind === "quotation" ? "draft" : "unpaid",
+    show_totals: true,
     ...initialDoc,
   });
   const [items, setItems] = useState<DocItem[]>(
@@ -86,7 +89,11 @@ export function DocForm({
   const termsValue = form.terms || company?.default_terms || "";
 
   const totals = useMemo(() => {
-    const subtotal = items.reduce((s, it) => s + toNumber(it.qty) * toNumber(it.rate), 0);
+    // Only rows flagged "in total" are summed; the rest are printed as options.
+    const subtotal = items.reduce(
+      (s, it) => (it.include_in_total === false ? s : s + toNumber(it.qty) * toNumber(it.rate)),
+      0,
+    );
     const pct = Math.min(Math.max(toNumber(discountPct), 0), 100);
     const discount = Math.round(((subtotal * pct) / 100) * 100) / 100;
     return { subtotal, discount, grand: subtotal - discount, pct };
