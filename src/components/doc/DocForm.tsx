@@ -131,6 +131,7 @@ export function DocForm({
         amount_words: amountInWords(totals.grand),
         terms: termsValue,
         status: form.status,
+        show_totals: form.show_totals,
       };
       const rows = valid.map((it, i) => ({ ...it, sr: i + 1, amount: toNumber(it.qty) * toNumber(it.rate) }));
 
@@ -228,8 +229,23 @@ export function DocForm({
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Item {idx + 1}
+                  {it.include_in_total === false && (
+                    <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] normal-case tracking-normal text-muted-foreground">
+                      Option — total me nahi judega
+                    </span>
+                  )}
                 </span>
-                <Button
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      className="size-3.5 accent-primary"
+                      checked={it.include_in_total !== false}
+                      onChange={(e) => patchItem(idx, { include_in_total: e.target.checked })}
+                    />
+                    Total me jodo
+                  </label>
+                  <Button
                   size="icon"
                   variant="ghost"
                   className="size-7 text-destructive"
