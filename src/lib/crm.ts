@@ -42,6 +42,8 @@ export type DocItem = {
   qty: number;
   rate: number;
   amount: number;
+  /** When false the row is an "option" — listed on the document but not summed. */
+  include_in_total?: boolean;
 };
 
 export type Quotation = {
@@ -57,6 +59,7 @@ export type Quotation = {
   amount_words: string | null;
   terms: string | null;
   status: string;
+  show_totals?: boolean;
   created_at: string;
   customers?: Customer | null;
 };
@@ -75,6 +78,7 @@ export type Invoice = {
   amount_words: string | null;
   terms: string | null;
   status: string;
+  show_totals?: boolean;
   created_at: string;
   customers?: Customer | null;
 };
@@ -239,6 +243,7 @@ export async function saveQuotation(doc: Partial<Quotation> & { id?: string }, i
       qty: it.qty,
       rate: it.rate,
       amount: it.amount,
+      include_in_total: it.include_in_total !== false,
     }));
     const { error } = await db.from("quotation_items").insert(rows);
     if (error) throw error;
@@ -300,6 +305,7 @@ export async function saveInvoice(doc: Partial<Invoice> & { id?: string }, items
       qty: it.qty,
       rate: it.rate,
       amount: it.amount,
+      include_in_total: it.include_in_total !== false,
     }));
     const { error } = await db.from("invoice_items").insert(rows);
     if (error) throw error;
