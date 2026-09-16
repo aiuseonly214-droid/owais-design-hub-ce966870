@@ -60,6 +60,7 @@ function NewInvoice() {
                 discount: Number(data.doc.discount),
                 terms: data.doc.terms ?? "",
                 status: "unpaid",
+                show_totals: data.doc.show_totals !== false,
                 quotation_id: data.doc.id,
               }
             : undefined
