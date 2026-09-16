@@ -254,7 +254,8 @@ export function DocForm({
                   aria-label={`Remove item ${idx + 1}`}
                 >
                   <Trash2 className="size-4" />
-                </Button>
+                  </Button>
+                </div>
               </div>
               <div className="grid gap-3 md:grid-cols-12">
                 <div className="md:col-span-5">
