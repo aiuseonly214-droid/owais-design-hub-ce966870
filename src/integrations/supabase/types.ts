@@ -196,6 +196,7 @@ export type Database = {
           amount: number
           description: string | null
           id: string
+          include_in_total: boolean
           invoice_id: string
           particular: string
           qty: number
@@ -207,6 +208,7 @@ export type Database = {
           amount?: number
           description?: string | null
           id?: string
+          include_in_total?: boolean
           invoice_id: string
           particular?: string
           qty?: number
@@ -218,6 +220,7 @@ export type Database = {
           amount?: number
           description?: string | null
           id?: string
+          include_in_total?: boolean
           invoice_id?: string
           particular?: string
           qty?: number
@@ -248,6 +251,7 @@ export type Database = {
           grand_total: number
           id: string
           quotation_id: string | null
+          show_totals: boolean
           status: string
           subject: string | null
           subtotal: number
@@ -266,6 +270,7 @@ export type Database = {
           grand_total?: number
           id?: string
           quotation_id?: string | null
+          show_totals?: boolean
           status?: string
           subject?: string | null
           subtotal?: number
@@ -284,6 +289,7 @@ export type Database = {
           grand_total?: number
           id?: string
           quotation_id?: string | null
+          show_totals?: boolean
           status?: string
           subject?: string | null
           subtotal?: number
@@ -330,6 +336,7 @@ export type Database = {
           amount: number
           description: string | null
           id: string
+          include_in_total: boolean
           particular: string
           qty: number
           quotation_id: string
@@ -341,6 +348,7 @@ export type Database = {
           amount?: number
           description?: string | null
           id?: string
+          include_in_total?: boolean
           particular?: string
           qty?: number
           quotation_id: string
@@ -352,6 +360,7 @@ export type Database = {
           amount?: number
           description?: string | null
           id?: string
+          include_in_total?: boolean
           particular?: string
           qty?: number
           quotation_id?: string
@@ -380,6 +389,7 @@ export type Database = {
           discount: number
           grand_total: number
           id: string
+          show_totals: boolean
           status: string
           subject: string | null
           subtotal: number
@@ -397,6 +407,7 @@ export type Database = {
           discount?: number
           grand_total?: number
           id?: string
+          show_totals?: boolean
           status?: string
           subject?: string | null
           subtotal?: number
@@ -414,6 +425,7 @@ export type Database = {
           discount?: number
           grand_total?: number
           id?: string
+          show_totals?: boolean
           status?: string
           subject?: string | null
           subtotal?: number
