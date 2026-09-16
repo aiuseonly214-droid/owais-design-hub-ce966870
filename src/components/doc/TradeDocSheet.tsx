@@ -169,7 +169,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
           </tbody>
         </table>
       </div>
+      )}
 
+      {doc.show_totals !== false && (
       <div
         style={{ backgroundColor: "#EEF4FB", borderColor: DOC.border }}
         className="mx-10 mt-4 border px-3 py-2 text-[12.5px]"
@@ -177,6 +179,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         <span className="text-[#5A6B80]">Amount in words: </span>
         <span className="font-medium text-[#12233A]">{doc.amount_words || "—"}</span>
       </div>
+      )}
 
       {doc.terms && (
         <div className="px-10 pt-5">
