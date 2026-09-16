@@ -46,6 +46,7 @@ function EditQuotation() {
           discount: Number(data.doc.discount),
           terms: data.doc.terms ?? "",
           status: data.doc.status,
+          show_totals: data.doc.show_totals !== false,
         }}
       />
     </div>

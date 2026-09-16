@@ -68,6 +68,7 @@ function InvoiceView() {
           grand_total: doc.grand_total,
           amount_words: doc.amount_words,
           terms: doc.terms,
+          show_totals: doc.show_totals,
         }}
       />
     </div>
