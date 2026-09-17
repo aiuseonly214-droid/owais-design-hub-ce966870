@@ -110,6 +110,111 @@ export function DocForm({
     );
   }
 
+  // Sections are derived from each item's group_name, so the flat array (and
+  // therefore the save path) stays exactly as before.
+  const blocks = useMemo(() => {
+    const out: { name: string | null; rows: { it: DocItem; idx: number }[]; subtotal: number }[] = [];
+    items.forEach((it, idx) => {
+      const name = it.group_name?.trim() ? it.group_name!.trim() : null;
+      let last = out[out.length - 1];
+      if (!last || last.name !== name) {
+        last = { name, rows: [], subtotal: 0 };
+        out.push(last);
+      }
+      last.rows.push({ it, idx });
+      if (it.include_in_total !== false) last.subtotal += toNumber(it.qty) * toNumber(it.rate);
+    });
+    return out;
+  }, [items]);
+
+  const groupNames = useMemo(
+    () => Array.from(new Set(blocks.map((b) => b.name).filter(Boolean) as string[])),
+    [blocks],
+  );
+
+  function addItemTo(name: string | null) {
+    setItems((prev) => {
+      const next = [...prev];
+      let at = next.length;
+      for (let i = next.length - 1; i >= 0; i--) {
+        const g = next[i]!.group_name?.trim() || null;
+        if (g === name) {
+          at = i + 1;
+          break;
+        }
+      }
+      next.splice(at, 0, { ...emptyItem(), group_name: name });
+      return next;
+    });
+  }
+
+  function addSection() {
+    const base = "New Section";
+    let name = base;
+    let n = 2;
+    while (groupNames.includes(name)) name = `${base} ${n++}`;
+    setItems((prev) => [...prev, { ...emptyItem(), group_name: name }]);
+  }
+
+  function renameGroup(oldName: string, newName: string) {
+    setItems((prev) =>
+      prev.map((it) => ((it.group_name?.trim() || null) === oldName ? { ...it, group_name: newName } : it)),
+    );
+  }
+
+  function deleteGroup(name: string) {
+    setItems((prev) =>
+      prev.map((it) => ((it.group_name?.trim() || null) === name ? { ...it, group_name: null } : it)),
+    );
+  }
+
+  function moveBlock(bi: number, dir: -1 | 1) {
+    const target = bi + dir;
+    if (target < 0 || target >= blocks.length) return;
+    const a = blocks[Math.min(bi, target)]!;
+    const b = blocks[Math.max(bi, target)]!;
+    const start = a.rows[0]!.idx;
+    const mid = b.rows[0]!.idx;
+    const endIdx = b.rows[b.rows.length - 1]!.idx + 1;
+    setItems((prev) => [
+      ...prev.slice(0, start),
+      ...prev.slice(mid, endIdx),
+      ...prev.slice(start, mid),
+      ...prev.slice(endIdx),
+    ]);
+  }
+
+  function moveItem(idx: number, dir: -1 | 1) {
+    const target = idx + dir;
+    if (target < 0 || target >= items.length) return;
+    const g = (x?: DocItem) => x?.group_name?.trim() || null;
+    if (g(items[idx]) !== g(items[target])) return;
+    setItems((prev) => {
+      const next = [...prev];
+      const [row] = next.splice(idx, 1);
+      next.splice(target, 0, row!);
+      return next;
+    });
+  }
+
+  function moveToGroup(idx: number, name: string | null) {
+    setItems((prev) => {
+      const next = [...prev];
+      const [row] = next.splice(idx, 1);
+      if (!row) return prev;
+      row.group_name = name;
+      let at = next.length;
+      for (let i = next.length - 1; i >= 0; i--) {
+        if ((next[i]!.group_name?.trim() || null) === name) {
+          at = i + 1;
+          break;
+        }
+      }
+      next.splice(at, 0, row);
+      return next;
+    });
+  }
+
   async function handleSave() {
     if (!form.customer_id) return toast.error("Please select a customer");
     const valid = items.filter((it) => it.particular.trim());
@@ -133,7 +238,12 @@ export function DocForm({
         status: form.status,
         show_totals: form.show_totals,
       };
-      const rows = valid.map((it, i) => ({ ...it, sr: i + 1, amount: toNumber(it.qty) * toNumber(it.rate) }));
+      const rows = valid.map((it, i) => ({
+        ...it,
+        sr: i + 1,
+        amount: toNumber(it.qty) * toNumber(it.rate),
+        group_name: it.group_name?.trim() ? it.group_name.trim() : null,
+      }));
 
       if (kind === "quotation") {
         const id = await saveQuotation({ ...base, valid_till: form.secondaryDate || null } as any, rows);
