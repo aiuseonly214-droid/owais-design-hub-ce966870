@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Trash2, Save, Loader2 } from "lucide-react";
+import { Plus, Trash2, Save, Loader2, FolderPlus, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +39,8 @@ export type DocFormValues = {
   quotation_id?: string | null;
 };
 
+const NO_GROUP = "__none__";
+
 const emptyItem = (): DocItem => ({
   sr: 1,
   particular: "",
@@ -48,6 +50,7 @@ const emptyItem = (): DocItem => ({
   rate: 0,
   amount: 0,
   include_in_total: true,
+  group_name: null,
 });
 
 export function DocForm({
@@ -327,108 +330,181 @@ export function DocForm({
       </Card>
 
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardHeader className="flex-col items-start gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">Items</CardTitle>
-          <Button size="sm" variant="secondary" onClick={() => setItems([...items, emptyItem()])}>
-            <Plus className="size-4" /> Add row
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={addSection}>
+              <FolderPlus className="size-4" /> Add section
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => addItemTo(null)}>
+              <Plus className="size-4" /> Add row
+            </Button>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {items.map((it, idx) => (
-            <div key={idx} className="rounded-lg border bg-muted/30 p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Item {idx + 1}
-                  {it.include_in_total === false && (
-                    <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] normal-case tracking-normal text-muted-foreground">
-                      Option — total me nahi judega
-                    </span>
-                  )}
-                </span>
-                <div className="flex items-center gap-3">
-                  <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      className="size-3.5 accent-primary"
-                      checked={it.include_in_total !== false}
-                      onChange={(e) => patchItem(idx, { include_in_total: e.target.checked })}
+        <CardContent className="space-y-4">
+          {blocks.map((block, bi) => {
+            const body = block.rows.map(({ it, idx }) => (
+              <div key={idx} className="rounded-lg border bg-muted/30 p-3">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Item {idx + 1}
+                    {it.include_in_total === false && (
+                      <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] normal-case tracking-normal text-muted-foreground">
+                        Option — total me nahi judega
+                      </span>
+                    )}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        className="size-3.5 accent-primary"
+                        checked={it.include_in_total !== false}
+                        onChange={(e) => patchItem(idx, { include_in_total: e.target.checked })}
+                      />
+                      Total me jodo
+                    </label>
+                    <Select
+                      value={block.name ?? NO_GROUP}
+                      onValueChange={(v) => moveToGroup(idx, v === NO_GROUP ? null : v)}
+                    >
+                      <SelectTrigger className="h-7 w-[150px] text-xs">
+                        <SelectValue placeholder="Move to section" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={NO_GROUP}>No section</SelectItem>
+                        {groupNames.map((g) => (
+                          <SelectItem key={g} value={g}>
+                            {g}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="size-7"
+                      onClick={() => moveItem(idx, -1)}
+                      aria-label={`Move item ${idx + 1} up`}
+                    >
+                      <ArrowUp className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="size-7"
+                      onClick={() => moveItem(idx, 1)}
+                      aria-label={`Move item ${idx + 1} down`}
+                    >
+                      <ArrowDown className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="size-7 text-destructive"
+                      onClick={() => setItems(items.filter((_, i) => i !== idx))}
+                      disabled={items.length === 1}
+                      aria-label={`Remove item ${idx + 1}`}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-12">
+                  <div className="md:col-span-5">
+                    <Label className="mb-1 block text-xs">Particular</Label>
+                    <Input
+                      value={it.particular}
+                      onChange={(e) => patchItem(idx, { particular: e.target.value })}
+                      placeholder="False ceiling — gypsum with cove lighting"
                     />
-                    Total me jodo
-                  </label>
-                  <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-7 text-destructive"
-                  onClick={() => setItems(items.filter((_, i) => i !== idx))}
-                  disabled={items.length === 1}
-                  aria-label={`Remove item ${idx + 1}`}
-                >
-                  <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </div>
-              <div className="grid gap-3 md:grid-cols-12">
-                <div className="md:col-span-5">
-                  <Label className="mb-1 block text-xs">Particular</Label>
-                  <Input
-                    value={it.particular}
-                    onChange={(e) => patchItem(idx, { particular: e.target.value })}
-                    placeholder="False ceiling — gypsum with cove lighting"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <Label className="mb-1 block text-xs">Unit</Label>
-                  <Select
-                    value={it.unit || "Nos"}
-                    onValueChange={(v) => patchItem(idx, { unit: v })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {UNITS.map((u) => (
-                        <SelectItem key={u} value={u}>
-                          {u}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <Label className="mb-1 block text-xs">Qty</Label>
-                  <Input
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right tabular-nums"
-                    value={it.qty === 0 ? "" : String(it.qty)}
-                    placeholder="0"
-                    onFocus={(e) => e.currentTarget.select()}
-                    onChange={(e) => patchItem(idx, { qty: toNumber(onlyNumeric(e.target.value)) })}
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <Label className="mb-1 block text-xs">Rate (₹)</Label>
-                  <Input
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right tabular-nums"
-                    value={it.rate === 0 ? "" : String(it.rate)}
-                    placeholder="0"
-                    onFocus={(e) => e.currentTarget.select()}
-                    onChange={(e) => patchItem(idx, { rate: toNumber(onlyNumeric(e.target.value)) })}
-                  />
-
-                </div>
-                <div className="md:col-span-1">
-                  <Label className="mb-1 block text-xs">Amount</Label>
-                  <div className="flex h-9 items-center justify-end rounded-md border bg-background px-2 text-sm font-medium tabular-nums">
-                    {formatINR(toNumber(it.qty) * toNumber(it.rate))}
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label className="mb-1 block text-xs">Unit</Label>
+                    <Select value={it.unit || "Nos"} onValueChange={(v) => patchItem(idx, { unit: v })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {UNITS.map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label className="mb-1 block text-xs">Qty</Label>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right tabular-nums"
+                      value={it.qty === 0 ? "" : String(it.qty)}
+                      placeholder="0"
+                      onFocus={(e) => e.currentTarget.select()}
+                      onChange={(e) => patchItem(idx, { qty: toNumber(onlyNumeric(e.target.value)) })}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label className="mb-1 block text-xs">Rate (₹)</Label>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right tabular-nums"
+                      value={it.rate === 0 ? "" : String(it.rate)}
+                      placeholder="0"
+                      onFocus={(e) => e.currentTarget.select()}
+                      onChange={(e) => patchItem(idx, { rate: toNumber(onlyNumeric(e.target.value)) })}
+                    />
+                  </div>
+                  <div className="md:col-span-1">
+                    <Label className="mb-1 block text-xs">Amount</Label>
+                    <div className="flex h-9 items-center justify-end rounded-md border bg-background px-2 text-sm font-medium tabular-nums">
+                      {formatINR(toNumber(it.qty) * toNumber(it.rate))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ));
+
+            if (!block.name) return <div key={`u-${bi}`} className="space-y-3">{body}</div>;
+
+            return (
+              <div key={`g-${bi}`} className="rounded-lg border border-primary/30 bg-background p-3">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <Input
+                    value={block.name}
+                    onChange={(e) => renameGroup(block.name!, e.target.value)}
+                    className="h-8 max-w-[240px] font-medium"
+                    placeholder="Section name"
+                  />
+                  <Button size="sm" variant="ghost" onClick={() => moveBlock(bi, -1)} aria-label="Move section up">
+                    <ArrowUp className="size-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => moveBlock(bi, 1)} aria-label="Move section down">
+                    <ArrowDown className="size-4" />
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => addItemTo(block.name)}>
+                    <Plus className="size-4" /> Add item
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive"
+                    onClick={() => deleteGroup(block.name!)}
+                  >
+                    <Trash2 className="size-4" /> Remove section
+                  </Button>
+                </div>
+                <div className="space-y-3">{body}</div>
+                <div className="mt-3 flex items-center justify-end gap-3 border-t pt-2 text-sm">
+                  <span className="text-muted-foreground">Subtotal — {block.name}</span>
+                  <span className="font-semibold tabular-nums">{formatINR(block.subtotal)}</span>
+                </div>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
 
