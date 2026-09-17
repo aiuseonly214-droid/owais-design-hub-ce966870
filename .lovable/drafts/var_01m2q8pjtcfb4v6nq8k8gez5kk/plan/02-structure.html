@@ -1,0 +1,38 @@
+<svg viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg" style="font-family: var(--font-sans)">
+  <style>
+    .lbl { font-size: 14px; font-weight: 480; fill: var(--fg-primary); }
+    .sm { font-size: 12px; fill: var(--fg-secondary); }
+    .mono { font-size: 12px; font-family: var(--font-mono); fill: var(--fg-secondary); }
+    .bx { fill: none; stroke: var(--fg-secondary); stroke-width: 1; }
+    .zn { fill: none; stroke: var(--border-translucent); stroke-width: 1; stroke-dasharray: 4 3; }
+  </style>
+
+  <rect class="zn" x="8" y="8" width="300" height="140" rx="8"/>
+  <text class="sm" x="20" y="26">section: Plot Work</text>
+  <rect class="bx" x="24" y="36" width="268" height="28" rx="8"/>
+  <text class="lbl" x="36" y="54">Plot A</text><text class="mono" x="276" y="54" text-anchor="end">19 x 16,751 = 3,18,269</text>
+  <rect class="bx" x="24" y="70" width="268" height="28" rx="8"/>
+  <text class="lbl" x="36" y="88">Plot B</text><text class="mono" x="276" y="88" text-anchor="end">5 x 16,542 = 82,710</text>
+  <text class="sm" x="292" y="126" text-anchor="end">Subtotal 4,00,979</text>
+
+  <rect class="zn" x="332" y="8" width="300" height="140" rx="8"/>
+  <text class="sm" x="344" y="26">section: Material</text>
+  <rect class="bx" x="348" y="36" width="268" height="28" rx="8"/>
+  <text class="lbl" x="360" y="54">Material A</text><text class="mono" x="600" y="54" text-anchor="end">240 x 56 = 13,440</text>
+  <rect class="bx" x="348" y="70" width="268" height="28" rx="8"/>
+  <text class="lbl" x="360" y="88">Material B</text><text class="mono" x="600" y="88" text-anchor="end">164 x 36 = 5,904</text>
+  <text class="sm" x="616" y="126" text-anchor="end">Subtotal 19,344</text>
+
+  <rect class="zn" x="8" y="164" width="300" height="86" rx="8"/>
+  <text class="sm" x="20" y="182">no section (existing behaviour)</text>
+  <rect class="bx" x="24" y="192" width="268" height="28" rx="8"/>
+  <text class="lbl" x="36" y="210">Ungrouped item</text><text class="mono" x="276" y="210" text-anchor="end">12 x 15 = 180</text>
+
+  <line x1="150" y1="250" x2="150" y2="286" stroke="var(--fg-secondary)" stroke-width="1" marker-end="url(#a)"/>
+  <line x1="480" y1="148" x2="480" y2="286" stroke="var(--fg-secondary)" stroke-width="1" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="var(--fg-secondary)"/></marker></defs>
+
+  <rect x="150" y="288" width="330" height="34" rx="8" fill="var(--bg-accent-translucent)" stroke="var(--fg-accent)"/>
+  <text class="lbl" x="170" y="310" style="fill: var(--fg-accent)">GRAND TOTAL = sum of subtotals</text>
+  <text class="mono" x="462" y="310" text-anchor="end" style="fill: var(--fg-accent)">4,20,503</text>
+</svg>
