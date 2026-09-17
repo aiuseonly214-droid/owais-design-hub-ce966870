@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { Fragment, forwardRef } from "react";
 import type { CompanyProfile, Customer, DocItem } from "@/lib/crm";
 import { formatAmount, formatDate } from "@/lib/format";
 import { DocFooter, DocHeader, DocTitleBar, InfoBlock } from "./DocChrome";
@@ -41,6 +41,17 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
     detailRows.push(["Valid Till", doc.secondaryDate ? formatDate(doc.secondaryDate) : "—"]);
   }
   detailRows.push(["Customer ID", customer?.code]);
+
+  // Items are grouped into sections by group_name, preserving their stored order.
+  // Ungrouped items (legacy documents) render exactly as before.
+  const blocks: { name: string | null; items: { it: DocItem; sr: number }[]; subtotal: number }[] = [];
+  items.forEach((it, i) => {
+    const name = it.group_name?.trim() ? it.group_name.trim() : null;
+    const last = blocks[blocks.length - 1];
+    const block = last && last.name === name ? last : (blocks.push({ name, items: [], subtotal: 0 }), blocks[blocks.length - 1]);
+    block.items.push({ it, sr: i + 1 });
+    if (it.include_in_total !== false) block.subtotal += Number(it.amount) || 0;
+  });
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
@@ -105,28 +116,53 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                 </td>
               </tr>
             )}
-            {items.map((it, idx) => (
-              <tr key={idx} style={{ backgroundColor: idx % 2 ? "#F7FAFD" : "#FFFFFF" }}>
-                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{idx + 1}</td>
-                <td className="border border-[#CBD9EA] px-2 py-2 align-top">
-                  <span className="font-medium text-[#12233A]">{it.particular}</span>
-                  {it.include_in_total === false && (
-                    <span className="ml-2 rounded border border-[#CBD9EA] bg-[#EEF4FB] px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-[#5A6B80]">
-                      Option
-                    </span>
-                  )}
-                </td>
-                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">
-                  {it.unit || "—"}
-                </td>
-                <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{it.qty}</td>
-                <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top">
-                  {formatAmount(it.rate)}
-                </td>
-                <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top font-medium">
-                  {formatAmount(it.amount)}
-                </td>
-              </tr>
+            {blocks.map((block, bi) => (
+              <Fragment key={bi}>
+                {block.name && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      style={{ backgroundColor: "#E4EDF8", color: DOC.primary }}
+                      className="border border-[#CBD9EA] px-2 py-1.5 text-[12px] font-semibold uppercase tracking-wider"
+                    >
+                      {block.name}
+                    </td>
+                  </tr>
+                )}
+                {block.items.map(({ it, sr }) => (
+                  <tr key={sr} style={{ backgroundColor: sr % 2 ? "#FFFFFF" : "#F7FAFD" }}>
+                    <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{sr}</td>
+                    <td className="border border-[#CBD9EA] px-2 py-2 align-top">
+                      <span className="font-medium text-[#12233A]">{it.particular}</span>
+                      {it.include_in_total === false && (
+                        <span className="ml-2 rounded border border-[#CBD9EA] bg-[#EEF4FB] px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-[#5A6B80]">
+                          Option
+                        </span>
+                      )}
+                    </td>
+                    <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">
+                      {it.unit || "—"}
+                    </td>
+                    <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{it.qty}</td>
+                    <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top">
+                      {formatAmount(it.rate)}
+                    </td>
+                    <td className="border border-[#CBD9EA] px-2 py-2 text-right align-top font-medium">
+                      {formatAmount(it.amount)}
+                    </td>
+                  </tr>
+                ))}
+                {block.name && doc.show_totals !== false && (
+                  <tr>
+                    <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] text-[#5A6B80]">
+                      Subtotal — {block.name}
+                    </td>
+                    <td className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] font-semibold text-[#12233A]">
+                      ₹ {formatAmount(block.subtotal)}
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
             ))}
           </tbody>
         </table>
