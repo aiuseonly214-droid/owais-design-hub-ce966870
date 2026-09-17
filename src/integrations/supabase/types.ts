@@ -195,6 +195,7 @@ export type Database = {
         Row: {
           amount: number
           description: string | null
+          group_name: string | null
           id: string
           include_in_total: boolean
           invoice_id: string
@@ -207,6 +208,7 @@ export type Database = {
         Insert: {
           amount?: number
           description?: string | null
+          group_name?: string | null
           id?: string
           include_in_total?: boolean
           invoice_id: string
@@ -219,6 +221,7 @@ export type Database = {
         Update: {
           amount?: number
           description?: string | null
+          group_name?: string | null
           id?: string
           include_in_total?: boolean
           invoice_id?: string
@@ -335,6 +338,7 @@ export type Database = {
         Row: {
           amount: number
           description: string | null
+          group_name: string | null
           id: string
           include_in_total: boolean
           particular: string
@@ -347,6 +351,7 @@ export type Database = {
         Insert: {
           amount?: number
           description?: string | null
+          group_name?: string | null
           id?: string
           include_in_total?: boolean
           particular?: string
@@ -359,6 +364,7 @@ export type Database = {
         Update: {
           amount?: number
           description?: string | null
+          group_name?: string | null
           id?: string
           include_in_total?: boolean
           particular?: string

@@ -8,6 +8,13 @@
       "when": 1789545447027,
       "tag": "0000_optional_totals_and_option_items",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789635190949,
+      "tag": "0001_item_group_name",
+      "breakpoints": true
     }
   ]
 }
