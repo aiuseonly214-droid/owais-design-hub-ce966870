@@ -44,6 +44,8 @@ export type DocItem = {
   amount: number;
   /** When false the row is an "option" — listed on the document but not summed. */
   include_in_total?: boolean;
+  /** Optional section name; null/undefined = ungrouped (legacy behaviour). */
+  group_name?: string | null;
 };
 
 export type Quotation = {
@@ -244,8 +246,9 @@ export async function saveQuotation(doc: Partial<Quotation> & { id?: string }, i
       rate: it.rate,
       amount: it.amount,
       include_in_total: it.include_in_total !== false,
+      group_name: it.group_name ?? null,
     }));
-    const { error } = await db.from("quotation_items").insert(rows);
+    const { error } = await db.from("quotation_items").insert(rows as any);
     if (error) throw error;
   }
   return id as string;
@@ -306,8 +309,9 @@ export async function saveInvoice(doc: Partial<Invoice> & { id?: string }, items
       rate: it.rate,
       amount: it.amount,
       include_in_total: it.include_in_total !== false,
+      group_name: it.group_name ?? null,
     }));
-    const { error } = await db.from("invoice_items").insert(rows);
+    const { error } = await db.from("invoice_items").insert(rows as any);
     if (error) throw error;
   }
   // Totals may have moved, so the paid/partial/unpaid flag has to follow.
