@@ -15,6 +15,13 @@
       "when": 1789635190949,
       "tag": "0001_item_group_name",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789977725075,
+      "tag": "0002_add_section_subtotal_visibility",
+      "breakpoints": true
     }
   ]
 }

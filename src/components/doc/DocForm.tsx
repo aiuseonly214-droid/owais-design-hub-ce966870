@@ -36,6 +36,7 @@ export type DocFormValues = {
   terms: string;
   status: string;
   show_totals: boolean;
+  show_section_subtotals: boolean;
   quotation_id?: string | null;
 };
 
@@ -77,6 +78,7 @@ export function DocForm({
     terms: "",
     status: kind === "quotation" ? "draft" : "unpaid",
     show_totals: true,
+    show_section_subtotals: true,
     ...initialDoc,
   });
   const [items, setItems] = useState<DocItem[]>(
@@ -118,7 +120,8 @@ export function DocForm({
   const blocks = useMemo(() => {
     const out: { name: string | null; rows: { it: DocItem; idx: number }[]; subtotal: number }[] = [];
     items.forEach((it, idx) => {
-      const name = it.group_name?.trim() ? it.group_name!.trim() : null;
+      const trimmedName = it.group_name?.trim();
+      const name = trimmedName || null;
       let last = out[out.length - 1];
       if (!last || last.name !== name) {
         last = { name, rows: [], subtotal: 0 };
@@ -240,6 +243,7 @@ export function DocForm({
         terms: termsValue,
         status: form.status,
         show_totals: form.show_totals,
+        show_section_subtotals: form.show_section_subtotals,
       };
       const rows = valid.map((it, i) => ({
         ...it,
@@ -475,7 +479,7 @@ export function DocForm({
                 <div className="mb-3 flex flex-wrap items-center gap-2">
                   <Input
                     value={block.name}
-                    onChange={(e) => renameGroup(block.name!, e.target.value)}
+                    onChange={(e) => renameGroup(block.name ?? "", e.target.value)}
                     className="h-8 max-w-[240px] font-medium"
                     placeholder="Section name"
                   />
@@ -492,7 +496,7 @@ export function DocForm({
                     size="sm"
                     variant="ghost"
                     className="text-destructive"
-                    onClick={() => deleteGroup(block.name!)}
+                    onClick={() => deleteGroup(block.name ?? "")}
                   >
                     <Trash2 className="size-4" /> Remove section
                   </Button>
@@ -531,13 +535,27 @@ export function DocForm({
               <input
                 type="checkbox"
                 className="size-4 accent-primary"
+                checked={form.show_section_subtotals}
+                onChange={(e) => setForm({ ...form, show_section_subtotals: e.target.checked })}
+              />
+              <span>
+                Section ke subtotals dikhao
+                <span className="block text-xs text-muted-foreground">
+                  Har section ke end me uska subtotal print hoga
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
                 checked={form.show_totals}
                 onChange={(e) => setForm({ ...form, show_totals: e.target.checked })}
               />
               <span>
-                Document par totals dikhao
+                Final totals dikhao
                 <span className="block text-xs text-muted-foreground">
-                  Band karne par sirf item list print hogi — Sub Total / Grand Total nahi
+                  Sub Total, Discount, Grand Total aur Amount in Words print honge
                 </span>
               </span>
             </label>

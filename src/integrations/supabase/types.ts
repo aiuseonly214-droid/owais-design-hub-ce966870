@@ -254,6 +254,7 @@ export type Database = {
           grand_total: number
           id: string
           quotation_id: string | null
+          show_section_subtotals: boolean
           show_totals: boolean
           status: string
           subject: string | null
@@ -273,6 +274,7 @@ export type Database = {
           grand_total?: number
           id?: string
           quotation_id?: string | null
+          show_section_subtotals?: boolean
           show_totals?: boolean
           status?: string
           subject?: string | null
@@ -292,6 +294,7 @@ export type Database = {
           grand_total?: number
           id?: string
           quotation_id?: string | null
+          show_section_subtotals?: boolean
           show_totals?: boolean
           status?: string
           subject?: string | null
@@ -395,6 +398,7 @@ export type Database = {
           discount: number
           grand_total: number
           id: string
+          show_section_subtotals: boolean
           show_totals: boolean
           status: string
           subject: string | null
@@ -413,6 +417,7 @@ export type Database = {
           discount?: number
           grand_total?: number
           id?: string
+          show_section_subtotals?: boolean
           show_totals?: boolean
           status?: string
           subject?: string | null
@@ -431,6 +436,7 @@ export type Database = {
           discount?: number
           grand_total?: number
           id?: string
+          show_section_subtotals?: boolean
           show_totals?: boolean
           status?: string
           subject?: string | null

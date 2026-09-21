@@ -16,6 +16,8 @@ export type TradeDoc = {
   terms: string | null;
   /** When false, totals and amount-in-words are hidden (option-list documents). */
   show_totals?: boolean | null;
+  /** When false, block-level subtotal rows are hidden. */
+  show_section_subtotals?: boolean | null;
 };
 
 type Props = {
@@ -52,6 +54,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
     block.items.push({ it, sr: i + 1 });
     if (it.include_in_total !== false) block.subtotal += Number(it.amount) || 0;
   });
+  const hasNamedSections = blocks.some((block) => block.name !== null);
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
@@ -152,10 +155,10 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                     </td>
                   </tr>
                 ))}
-                {block.name && doc.show_totals !== false && (
+                {hasNamedSections && doc.show_section_subtotals !== false && (
                   <tr>
                     <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] text-[#5A6B80]">
-                      Subtotal — {block.name}
+                      {block.name ? `Subtotal — ${block.name}` : "Subtotal"}
                     </td>
                     <td className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] font-semibold text-[#12233A]">
                       ₹ {formatAmount(block.subtotal)}
