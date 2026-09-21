@@ -62,6 +62,8 @@ export type Quotation = {
   terms: string | null;
   status: string;
   show_totals?: boolean;
+  /** Controls block-level subtotal rows independently from the final totals panel. */
+  show_section_subtotals?: boolean;
   created_at: string;
   customers?: Customer | null;
 };
@@ -81,6 +83,8 @@ export type Invoice = {
   terms: string | null;
   status: string;
   show_totals?: boolean;
+  /** Controls block-level subtotal rows independently from the final totals panel. */
+  show_section_subtotals?: boolean;
   created_at: string;
   customers?: Customer | null;
 };
