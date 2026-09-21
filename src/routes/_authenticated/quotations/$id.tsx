@@ -55,6 +55,8 @@ function QuotationView() {
           amount_words: data.doc.amount_words,
           terms: data.doc.terms,
           status: "draft",
+           show_totals: data.doc.show_totals !== false,
+           show_section_subtotals: data.doc.show_section_subtotals !== false,
         } as never,
         data.items,
       );
