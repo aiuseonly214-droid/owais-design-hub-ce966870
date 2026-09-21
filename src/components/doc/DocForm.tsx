@@ -472,7 +472,19 @@ export function DocForm({
               </div>
             ));
 
-            if (!block.name) return <div key={`u-${bi}`} className="space-y-3">{body}</div>;
+            if (!block.name) {
+              return (
+                <div key={`u-${bi}`} className="space-y-3">
+                  {body}
+                  {blocks.some((entry) => entry.name !== null) && (
+                    <div className="flex items-center justify-end gap-3 border-t pt-2 text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="font-semibold tabular-nums">{formatINR(block.subtotal)}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            }
 
             return (
               <div key={`g-${bi}`} className="rounded-lg border border-primary/30 bg-background p-3">
