@@ -13,6 +13,12 @@ export const Route = createFileRoute("/_authenticated")({
         await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
         throw redirect({ to: "/auth" });
       }
+      // Only accounts an admin has granted a role may enter the app.
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+      if (!roles?.length) {
+        await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+        throw redirect({ to: "/auth" });
+      }
       return { user: data.user };
     } catch (e) {
       if (e && typeof e === "object" && "isRedirect" in e) throw e;
