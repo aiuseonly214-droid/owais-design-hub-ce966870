@@ -88,13 +88,14 @@ export function DocListPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
-                      Loading…
-                    </TableCell>
-                  </TableRow>
-                )}
+                {isLoading &&
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <TableRow key={`sk-${i}`}>
+                      <TableCell colSpan={6}>
+                        <Skeleton className="h-5 w-full" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 {!isLoading && rows.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">

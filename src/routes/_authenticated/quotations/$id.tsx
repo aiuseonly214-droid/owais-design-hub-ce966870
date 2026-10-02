@@ -57,6 +57,7 @@ function QuotationView() {
           status: "draft",
           show_totals: data.doc.show_totals !== false,
           show_section_subtotals: data.doc.show_section_subtotals !== false,
+          show_running_subtotals: data.doc.show_running_subtotals === true,
         } as never,
         data.items,
       );
@@ -103,6 +104,7 @@ function QuotationView() {
           terms: doc.terms,
           show_totals: doc.show_totals,
           show_section_subtotals: doc.show_section_subtotals,
+          show_running_subtotals: doc.show_running_subtotals,
         }}
       />
     </div>

@@ -37,6 +37,7 @@ export type DocFormValues = {
   status: string;
   show_totals: boolean;
   show_section_subtotals: boolean;
+  show_running_subtotals: boolean;
   quotation_id?: string | null;
 };
 
@@ -79,6 +80,7 @@ export function DocForm({
     status: kind === "quotation" ? "draft" : "unpaid",
     show_totals: true,
     show_section_subtotals: true,
+    show_running_subtotals: false,
     ...initialDoc,
   });
   const [items, setItems] = useState<DocItem[]>(
@@ -244,6 +246,7 @@ export function DocForm({
         status: form.status,
         show_totals: form.show_totals,
         show_section_subtotals: form.show_section_subtotals,
+        show_running_subtotals: form.show_running_subtotals,
       };
       const rows = valid.map((it, i) => ({
         ...it,
@@ -554,6 +557,20 @@ export function DocForm({
                 Section ke subtotals dikhao
                 <span className="block text-xs text-muted-foreground">
                   Har section ke end me uska subtotal print hoga
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
+                checked={form.show_running_subtotals}
+                onChange={(e) => setForm({ ...form, show_running_subtotals: e.target.checked })}
+              />
+              <span>
+                Row-wise running subtotal dikhao
+                <span className="block text-xs text-muted-foreground">
+                  Section ke andar har row ke neeche ab tak ka total, aur end me "Section Total"
                 </span>
               </span>
             </label>

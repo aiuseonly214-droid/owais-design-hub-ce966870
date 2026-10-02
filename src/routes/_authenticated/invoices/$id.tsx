@@ -70,6 +70,7 @@ function InvoiceView() {
           terms: doc.terms,
           show_totals: doc.show_totals,
           show_section_subtotals: doc.show_section_subtotals,
+          show_running_subtotals: doc.show_running_subtotals,
         }}
       />
     </div>

@@ -48,6 +48,7 @@ function EditQuotation() {
           status: data.doc.status,
           show_totals: data.doc.show_totals !== false,
           show_section_subtotals: data.doc.show_section_subtotals !== false,
+          show_running_subtotals: data.doc.show_running_subtotals === true,
         }}
       />
     </div>

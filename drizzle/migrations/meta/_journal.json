@@ -22,6 +22,13 @@
       "when": 1789977725075,
       "tag": "0002_add_section_subtotal_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790917609135,
+      "tag": "0003_running_subtotals",
+      "breakpoints": true
     }
   ]
 }

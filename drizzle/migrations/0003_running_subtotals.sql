@@ -1,0 +1,2 @@
+ALTER TABLE public.quotations ADD COLUMN IF NOT EXISTS show_running_subtotals boolean NOT NULL DEFAULT false;
+ALTER TABLE public.invoices ADD COLUMN IF NOT EXISTS show_running_subtotals boolean NOT NULL DEFAULT false;

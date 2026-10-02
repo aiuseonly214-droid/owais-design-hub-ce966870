@@ -18,6 +18,8 @@ export type TradeDoc = {
   show_totals?: boolean | null;
   /** When false, block-level subtotal rows are hidden. */
   show_section_subtotals?: boolean | null;
+  /** When true, each row shows a running subtotal within its section. */
+  show_running_subtotals?: boolean | null;
 };
 
 type Props = {
@@ -46,15 +48,19 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
 
   // Items are grouped into sections by group_name, preserving their stored order.
   // Ungrouped items (legacy documents) render exactly as before.
-  const blocks: { name: string | null; items: { it: DocItem; sr: number }[]; subtotal: number }[] = [];
+  const blocks: { name: string | null; items: { it: DocItem; sr: number; running: number }[]; subtotal: number }[] = [];
   items.forEach((it, i) => {
     const name = it.group_name?.trim() ? it.group_name.trim() : null;
     const last = blocks[blocks.length - 1];
     const block = last && last.name === name ? last : (blocks.push({ name, items: [], subtotal: 0 }), blocks[blocks.length - 1]);
-    block.items.push({ it, sr: i + 1 });
     if (it.include_in_total !== false) block.subtotal += Number(it.amount) || 0;
+    block.items.push({ it, sr: i + 1, running: block.subtotal });
   });
+  const running = doc.show_running_subtotals === true;
   const hasNamedSections = blocks.some((block) => block.name !== null);
+  // Running mode always closes each block with its section total.
+  const showBlockTotal = running || (hasNamedSections && doc.show_section_subtotals !== false);
+
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
@@ -132,8 +138,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                     </td>
                   </tr>
                 )}
-                {block.items.map(({ it, sr }) => (
-                  <tr key={sr} style={{ backgroundColor: sr % 2 ? "#FFFFFF" : "#F7FAFD" }}>
+                {block.items.map(({ it, sr, running: run }) => (
+                  <Fragment key={sr}>
+                  <tr style={{ backgroundColor: sr % 2 ? "#FFFFFF" : "#F7FAFD" }}>
                     <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{sr}</td>
                     <td className="border border-[#CBD9EA] px-2 py-2 align-top">
                       <span className="font-medium text-[#12233A]">{it.particular}</span>
@@ -154,11 +161,22 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                       {formatAmount(it.amount)}
                     </td>
                   </tr>
+                  {running && (
+                    <tr>
+                      <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1 text-right text-[11px] italic text-[#5A6B80]">
+                        Subtotal (till row {sr})
+                      </td>
+                      <td className="border border-[#CBD9EA] px-2 py-1 text-right text-[11px] font-medium text-[#0E8F8C]">
+                        ₹ {formatAmount(run)}
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))}
-                {hasNamedSections && doc.show_section_subtotals !== false && (
+                {showBlockTotal && (
                   <tr>
                     <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] text-[#5A6B80]">
-                      {block.name ? `Subtotal — ${block.name}` : "Subtotal"}
+                      {running ? (block.name ? `Section Total — ${block.name}` : "Section Total") : block.name ? `Subtotal — ${block.name}` : "Subtotal"}
                     </td>
                     <td className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] font-semibold text-[#12233A]">
                       ₹ {formatAmount(block.subtotal)}
