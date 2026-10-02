@@ -62,6 +62,7 @@ function NewInvoice() {
                 status: "unpaid",
                 show_totals: data.doc.show_totals !== false,
                 show_section_subtotals: data.doc.show_section_subtotals !== false,
+                show_running_subtotals: data.doc.show_running_subtotals === true,
                 quotation_id: data.doc.id,
               }
             : undefined

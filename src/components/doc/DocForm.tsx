@@ -37,6 +37,7 @@ export type DocFormValues = {
   status: string;
   show_totals: boolean;
   show_section_subtotals: boolean;
+  show_running_subtotals: boolean;
   quotation_id?: string | null;
 };
 
@@ -79,6 +80,7 @@ export function DocForm({
     status: kind === "quotation" ? "draft" : "unpaid",
     show_totals: true,
     show_section_subtotals: true,
+    show_running_subtotals: false,
     ...initialDoc,
   });
   const [items, setItems] = useState<DocItem[]>(
@@ -244,6 +246,7 @@ export function DocForm({
         status: form.status,
         show_totals: form.show_totals,
         show_section_subtotals: form.show_section_subtotals,
+        show_running_subtotals: form.show_running_subtotals,
       };
       const rows = valid.map((it, i) => ({
         ...it,

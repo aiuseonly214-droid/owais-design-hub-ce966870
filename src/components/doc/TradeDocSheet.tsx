@@ -18,6 +18,8 @@ export type TradeDoc = {
   show_totals?: boolean | null;
   /** When false, block-level subtotal rows are hidden. */
   show_section_subtotals?: boolean | null;
+  /** When true, each row shows a running subtotal within its section. */
+  show_running_subtotals?: boolean | null;
 };
 
 type Props = {
