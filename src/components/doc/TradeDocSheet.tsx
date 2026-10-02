@@ -138,8 +138,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                     </td>
                   </tr>
                 )}
-                {block.items.map(({ it, sr }) => (
-                  <tr key={sr} style={{ backgroundColor: sr % 2 ? "#FFFFFF" : "#F7FAFD" }}>
+                {block.items.map(({ it, sr, running: run }) => (
+                  <Fragment key={sr}>
+                  <tr style={{ backgroundColor: sr % 2 ? "#FFFFFF" : "#F7FAFD" }}>
                     <td className="border border-[#CBD9EA] px-2 py-2 text-center align-top">{sr}</td>
                     <td className="border border-[#CBD9EA] px-2 py-2 align-top">
                       <span className="font-medium text-[#12233A]">{it.particular}</span>
@@ -160,11 +161,22 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
                       {formatAmount(it.amount)}
                     </td>
                   </tr>
+                  {running && (
+                    <tr>
+                      <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1 text-right text-[11px] italic text-[#5A6B80]">
+                        Subtotal (till row {sr})
+                      </td>
+                      <td className="border border-[#CBD9EA] px-2 py-1 text-right text-[11px] font-medium text-[#0E8F8C]">
+                        ₹ {formatAmount(run)}
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))}
-                {hasNamedSections && doc.show_section_subtotals !== false && (
+                {showBlockTotal && (
                   <tr>
                     <td colSpan={5} className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] text-[#5A6B80]">
-                      {block.name ? `Subtotal — ${block.name}` : "Subtotal"}
+                      {running ? (block.name ? `Section Total — ${block.name}` : "Section Total") : block.name ? `Subtotal — ${block.name}` : "Subtotal"}
                     </td>
                     <td className="border border-[#CBD9EA] px-2 py-1.5 text-right text-[12px] font-semibold text-[#12233A]">
                       ₹ {formatAmount(block.subtotal)}
