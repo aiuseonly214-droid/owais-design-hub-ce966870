@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   FileText,
   Plus,
@@ -106,7 +107,11 @@ function Dashboard() {
               </span>
               <div className="min-w-0">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-                <p className="truncate font-display text-xl">{value}</p>
+                {s && inq ? (
+                  <p className="truncate font-display text-xl">{value}</p>
+                ) : (
+                  <Skeleton className="mt-1 h-6 w-24" />
+                )}
               </div>
             </CardContent>
           </Card>
