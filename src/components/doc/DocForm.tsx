@@ -564,6 +564,20 @@ export function DocForm({
               <input
                 type="checkbox"
                 className="size-4 accent-primary"
+                checked={form.show_running_subtotals}
+                onChange={(e) => setForm({ ...form, show_running_subtotals: e.target.checked })}
+              />
+              <span>
+                Row-wise running subtotal dikhao
+                <span className="block text-xs text-muted-foreground">
+                  Section ke andar har row ke neeche ab tak ka total, aur end me "Section Total"
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
                 checked={form.show_totals}
                 onChange={(e) => setForm({ ...form, show_totals: e.target.checked })}
               />

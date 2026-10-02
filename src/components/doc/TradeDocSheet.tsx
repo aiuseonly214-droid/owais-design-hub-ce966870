@@ -48,15 +48,19 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
 
   // Items are grouped into sections by group_name, preserving their stored order.
   // Ungrouped items (legacy documents) render exactly as before.
-  const blocks: { name: string | null; items: { it: DocItem; sr: number }[]; subtotal: number }[] = [];
+  const blocks: { name: string | null; items: { it: DocItem; sr: number; running: number }[]; subtotal: number }[] = [];
   items.forEach((it, i) => {
     const name = it.group_name?.trim() ? it.group_name.trim() : null;
     const last = blocks[blocks.length - 1];
     const block = last && last.name === name ? last : (blocks.push({ name, items: [], subtotal: 0 }), blocks[blocks.length - 1]);
-    block.items.push({ it, sr: i + 1 });
     if (it.include_in_total !== false) block.subtotal += Number(it.amount) || 0;
+    block.items.push({ it, sr: i + 1, running: block.subtotal });
   });
+  const running = doc.show_running_subtotals === true;
   const hasNamedSections = blocks.some((block) => block.name !== null);
+  // Running mode always closes each block with its section total.
+  const showBlockTotal = running || (hasNamedSections && doc.show_section_subtotals !== false);
+
 
   return (
     <div ref={ref} className="doc-sheet mx-auto flex flex-col shadow-lg">
