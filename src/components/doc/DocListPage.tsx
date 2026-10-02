@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
 import { Plus, Search } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
