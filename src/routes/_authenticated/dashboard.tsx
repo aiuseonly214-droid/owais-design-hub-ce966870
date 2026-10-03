@@ -50,7 +50,7 @@ function Dashboard() {
   async function loadInsights() {
     setInsightsBusy(true);
     try {
-      const res = await aiBusinessInsights({ data: {} });
+      const res = await aiBusinessInsights();
       setInsights(res.insights);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "AI insights nahi mil paye");
