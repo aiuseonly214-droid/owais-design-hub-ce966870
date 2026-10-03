@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   FileText,
+  Loader2,
   Plus,
   Receipt as ReceiptIcon,
   ScrollText,
+  Sparkles,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -19,7 +22,9 @@ import {
   fetchReceipts,
   fetchSummary,
 } from "@/lib/crm";
+import { aiBusinessInsights } from "@/lib/ai.functions";
 import { formatDate, formatINR } from "@/lib/format";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
