@@ -44,6 +44,21 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const [insights, setInsights] = useState<string | null>(null);
+  const [insightsBusy, setInsightsBusy] = useState(false);
+
+  async function loadInsights() {
+    setInsightsBusy(true);
+    try {
+      const res = await aiBusinessInsights({ data: {} });
+      setInsights(res.insights);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "AI insights nahi mil paye");
+    } finally {
+      setInsightsBusy(false);
+    }
+  }
+
   const { data: s } = useQuery({ queryKey: ["summary"], queryFn: fetchSummary });
   const { data: inq } = useQuery({ queryKey: ["inquiry-stats"], queryFn: fetchInquiryStats });
   const { data: quotations = [] } = useQuery({
@@ -95,6 +110,14 @@ function Dashboard() {
           <Link to="/receipts/new">
             <Plus className="size-4" /> New Receipt
           </Link>
+        </Button>
+        <Button size="sm" variant="outline" onClick={loadInsights} disabled={insightsBusy}>
+          {insightsBusy ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Sparkles className="size-4" />
+          )}
+          AI Insights
         </Button>
         <Button asChild size="sm" variant="outline">
           <Link to="/customers">
