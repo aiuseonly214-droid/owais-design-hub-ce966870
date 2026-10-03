@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   FileText,
+  Loader2,
   Plus,
   Receipt as ReceiptIcon,
   ScrollText,
+  Sparkles,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -19,7 +22,9 @@ import {
   fetchReceipts,
   fetchSummary,
 } from "@/lib/crm";
+import { aiBusinessInsights } from "@/lib/ai.functions";
 import { formatDate, formatINR } from "@/lib/format";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -39,6 +44,21 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const [insights, setInsights] = useState<string | null>(null);
+  const [insightsBusy, setInsightsBusy] = useState(false);
+
+  async function loadInsights() {
+    setInsightsBusy(true);
+    try {
+      const res = await aiBusinessInsights();
+      setInsights(res.insights);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "AI insights nahi mil paye");
+    } finally {
+      setInsightsBusy(false);
+    }
+  }
+
   const { data: s } = useQuery({ queryKey: ["summary"], queryFn: fetchSummary });
   const { data: inq } = useQuery({ queryKey: ["inquiry-stats"], queryFn: fetchInquiryStats });
   const { data: quotations = [] } = useQuery({
@@ -91,12 +111,32 @@ function Dashboard() {
             <Plus className="size-4" /> New Receipt
           </Link>
         </Button>
+        <Button size="sm" variant="outline" onClick={loadInsights} disabled={insightsBusy}>
+          {insightsBusy ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Sparkles className="size-4" />
+          )}
+          AI Insights
+        </Button>
         <Button asChild size="sm" variant="outline">
           <Link to="/customers">
             <Plus className="size-4" /> New Customer
           </Link>
         </Button>
       </div>
+
+      {insights && (
+        <Card className="mb-6 border-accent/40 bg-accent/5">
+          <CardHeader className="flex-row items-center gap-2 space-y-0">
+            <Sparkles className="size-4 text-accent-foreground" />
+            <CardTitle className="text-base">AI Business Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="whitespace-pre-line text-sm leading-relaxed">{insights}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(({ label, value, icon: Icon }) => (

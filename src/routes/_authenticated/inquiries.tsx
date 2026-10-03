@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRightLeft, Pencil, Plus, Search, TrendingUp } from "lucide-react";
+import { ArrowRightLeft, Loader2, Pencil, Plus, Search, Sparkles, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,7 @@ import {
   saveInquiry,
   type Inquiry,
 } from "@/lib/crm";
+import { aiParseInquiry } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/inquiries")({
   head: () => ({
@@ -76,6 +77,33 @@ function InquiriesPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
+
+  async function aiFill() {
+    const text = (draft?.requirement ?? "").trim();
+    if (text.length < 5) {
+      toast.error("Pehle Requirement box me customer ka message paste karein");
+      return;
+    }
+    setAiBusy(true);
+    try {
+      const p = await aiParseInquiry({ data: { text } });
+      setDraft((d) => ({
+        ...d,
+        name: d?.name || p.name,
+        mobile: d?.mobile || p.mobile,
+        city: d?.city || p.city,
+        service: d?.service || p.service,
+        budget: d?.budget || (p.budget ? Number(p.budget) : undefined),
+        notes: d?.notes || p.notes,
+      }));
+      toast.success("AI ne details bhar di — check kar lein");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "AI parse nahi kar paya");
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   const { data: inquiries = [], isLoading } = useQuery({
     queryKey: ["inquiries", search],
@@ -357,9 +385,26 @@ function InquiriesPage() {
                 />
               </div>
               <div className="grid gap-2 sm:col-span-2">
-                <Label>Requirement</Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Label>Requirement</Label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={aiFill}
+                    disabled={aiBusy}
+                  >
+                    {aiBusy ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="size-4" />
+                    )}
+                    AI se form bhare
+                  </Button>
+                </div>
                 <Textarea
                   rows={3}
+                  placeholder="Customer ka WhatsApp/call message yahan paste karein, phir 'AI se form bhare' dabayein"
                   value={draft.requirement ?? ""}
                   onChange={(e) => setDraft({ ...draft, requirement: e.target.value })}
                 />
