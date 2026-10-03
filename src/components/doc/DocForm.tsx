@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Trash2, Save, Loader2, FolderPlus, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, Save, Loader2, FolderPlus, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +17,19 @@ import {
 } from "@/components/ui/select";
 import { CustomerPicker } from "@/components/doc/CustomerPicker";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   fetchCompany,
   saveInvoice,
   saveQuotation,
   type DocItem,
 } from "@/lib/crm";
+import { aiQuotationDraft } from "@/lib/ai.functions";
 import { INVOICE_STATUS, QUOTATION_STATUS, UNITS } from "@/lib/options";
 import { addDaysISO, amountInWords, formatINR, onlyNumeric, toNumber, todayISO } from "@/lib/format";
 
@@ -70,6 +78,9 @@ export function DocForm({
 
 
   const [saving, setSaving] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiReq, setAiReq] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
   const [form, setForm] = useState<DocFormValues>({
     customer_id: "",
     date: todayISO(),
@@ -223,6 +234,37 @@ export function DocForm({
     });
   }
 
+  async function handleAiDraft() {
+    if (aiReq.trim().length < 5) return toast.error("Requirement thoda detail me likhein");
+    setAiBusy(true);
+    try {
+      const draft = await aiQuotationDraft({ data: { requirement: aiReq.trim() } });
+      const rows: DocItem[] = [];
+      draft.sections.forEach((sec) => {
+        sec.items.forEach((it) => {
+          rows.push({
+            ...emptyItem(),
+            particular: it.particular,
+            unit: it.unit,
+            qty: it.qty,
+            rate: it.rate,
+            amount: it.qty * it.rate,
+            group_name: sec.name,
+          });
+        });
+      });
+      if (rows.length) setItems(rows);
+      if (draft.subject) setForm((f) => ({ ...f, subject: draft.subject }));
+      setAiOpen(false);
+      setAiReq("");
+      toast.success("AI draft tayyar — rates check karke save karein");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "AI draft nahi ban paya");
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
   async function handleSave() {
     if (!form.customer_id) return toast.error("Please select a customer");
     const valid = items.filter((it) => it.particular.trim());
@@ -277,6 +319,53 @@ export function DocForm({
 
   return (
     <div className="space-y-5">
+      <Card className="border-accent/40 bg-accent/5">
+        <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-md bg-accent/15 text-accent-foreground">
+              <Sparkles className="size-5" />
+            </span>
+            <div>
+              <p className="font-medium">AI Quotation Writer</p>
+              <p className="text-sm text-muted-foreground">
+                Requirement likho — AI items, rates aur sections ka draft bana dega.
+              </p>
+            </div>
+          </div>
+          <Button type="button" variant="secondary" onClick={() => setAiOpen(true)}>
+            <Sparkles className="size-4" /> AI se draft banao
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Dialog open={aiOpen} onOpenChange={setAiOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>AI Quotation Writer</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-2">
+            <Label>Customer ki requirement</Label>
+            <Textarea
+              rows={5}
+              placeholder="Example: 2BHK flat ka full interior — modular kitchen, 2 wardrobe, false ceiling living room me, painting..."
+              value={aiReq}
+              onChange={(e) => setAiReq(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              AI estimated rates bharta hai — save karne se pehle apne hisab se badal lein.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAiOpen(false)} disabled={aiBusy}>
+              Cancel
+            </Button>
+            <Button onClick={handleAiDraft} disabled={aiBusy}>
+              {aiBusy && <Loader2 className="size-4 animate-spin" />} Draft banao
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Details</CardTitle>
