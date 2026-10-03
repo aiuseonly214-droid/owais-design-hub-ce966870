@@ -126,6 +126,18 @@ function Dashboard() {
         </Button>
       </div>
 
+      {insights && (
+        <Card className="mb-6 border-accent/40 bg-accent/5">
+          <CardHeader className="flex-row items-center gap-2 space-y-0">
+            <Sparkles className="size-4 text-accent-foreground" />
+            <CardTitle className="text-base">AI Business Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="whitespace-pre-line text-sm leading-relaxed">{insights}</p>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(({ label, value, icon: Icon }) => (
           <Card key={label}>
