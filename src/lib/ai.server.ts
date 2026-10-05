@@ -41,7 +41,7 @@ export async function aiText(messages: ModelMessage[]): Promise<string> {
   const rest = messages.filter((m) => m.role !== "system");
   const result = streamText({
     model: provider.responses(MODEL),
-    system: system || undefined,
+    instructions: system || undefined,
     messages: rest,
     maxRetries: 0,
     providerOptions: {
