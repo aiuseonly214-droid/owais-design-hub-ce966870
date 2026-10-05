@@ -399,21 +399,25 @@ export async function fetchPaidSoFar(customerId: string, excludeReceiptId?: stri
 /* ---------------- dashboard ---------------- */
 
 export async function fetchSummary() {
-  const [c, q, i, r] = await Promise.all([
+  const [c, q, i, r, out] = await Promise.all([
     db.from("customers").select("id", { count: "exact", head: true }),
     db.from("quotations").select("id", { count: "exact", head: true }),
     db.from("invoices").select("grand_total"),
     db.from("receipts").select("amount_received"),
+    fetchOutstanding(),
   ]);
   const invoiced = (i.data ?? []).reduce((s: number, x: any) => s + Number(x.grand_total || 0), 0);
   const received = (r.data ?? []).reduce((s: number, x: any) => s + Number(x.amount_received || 0), 0);
+  // Same per-customer logic as the Outstanding page, so both screens agree
+  // (advances from one customer never reduce another customer's dues).
+  const outstanding = out.reduce((s, x) => s + x.balance, 0);
   return {
     customers: c.count ?? 0,
     quotations: q.count ?? 0,
     invoices: (i.data ?? []).length,
     invoiced,
     received,
-    outstanding: Math.max(0, invoiced - received),
+    outstanding,
   };
 }
 
