@@ -324,7 +324,7 @@ function StatusPill({ status, overdue }: { status: string; overdue: boolean }) {
         overdue
           ? "bg-destructive/10 text-destructive"
           : status === "paid"
-            ? "bg-accent/15 text-accent-foreground"
+            ? "bg-accent/15 text-accent"
             : status === "partial"
               ? "bg-primary/10 text-primary"
               : "bg-muted text-muted-foreground",
