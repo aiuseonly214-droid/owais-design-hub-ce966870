@@ -211,6 +211,77 @@ function SettingsPage() {
           <p className="text-sm text-muted-foreground">Only an administrator can edit these.</p>
         )}
       </div>
+      {isAdmin && <TeamAccess myId={user?.id} />}
+    </div>
+  );
+}
+
+type Member = { id: string; full_name: string | null; email: string | null; created_at: string; role: string | null };
+
+function TeamAccess({ myId }: { myId?: string }) {
+  const qc = useQueryClient();
+  const { data: members = [], isLoading } = useQuery({
+    queryKey: ["team"],
+    queryFn: async (): Promise<Member[]> => {
+      const [p, r] = await Promise.all([
+        supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id, role"),
+      ]);
+      if (p.error) throw p.error;
+      const roles = new Map((r.data ?? []).map((x) => [x.user_id, x.role as string]));
+      return (p.data ?? []).map((x: any) => ({ ...x, role: roles.get(x.id) ?? null }));
+    },
+  });
+
+  async function grant(id: string) {
+    const { error } = await supabase.from("user_roles").insert({ user_id: id, role: "employee" });
+    if (error) return toast.error(error.message);
+    toast.success("Access de diya — ab ye Employee Portal se login kar sakte hain");
+    qc.invalidateQueries({ queryKey: ["team"] });
+  }
+  async function revoke(id: string) {
+    const { error } = await supabase.from("user_roles").delete().eq("user_id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Access hata diya");
+    qc.invalidateQueries({ queryKey: ["team"] });
+  }
+
+  const pending = members.filter((m) => !m.role);
+  const active = members.filter((m) => m.role);
+  const row = (m: Member, action: React.ReactNode) => (
+    <div key={m.id} className="flex items-center justify-between gap-3 border-b py-3 last:border-0">
+      <div className="min-w-0">
+        <p className="truncate font-medium">{m.full_name || "—"}</p>
+        <p className="truncate text-xs text-muted-foreground">{m.email}{m.role ? ` · ${m.role}` : ""}</p>
+      </div>
+      {action}
+    </div>
+  );
+
+  return (
+    <div className="mt-8 grid gap-5 lg:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Access requests ({pending.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? <Loader2 className="size-4 animate-spin" /> : pending.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Koi pending request nahi hai.</p>
+          ) : pending.map((m) => row(m, <Button size="sm" onClick={() => grant(m.id)}>Allow</Button>))}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Team members</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {active.map((m) =>
+            row(m, m.id === myId || m.role === "admin" ? null : (
+              <Button size="sm" variant="outline" onClick={() => revoke(m.id)}>Remove access</Button>
+            )),
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
