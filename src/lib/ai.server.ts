@@ -33,9 +33,16 @@ export async function aiText(messages: ModelMessage[]): Promise<string> {
     headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
     fetch: runIdFetch.fetch,
   });
+  // System prompts must go in `system`, not inside `messages`.
+  const system = messages
+    .filter((m) => m.role === "system")
+    .map((m) => (typeof m.content === "string" ? m.content : ""))
+    .join("\n\n");
+  const rest = messages.filter((m) => m.role !== "system");
   const result = streamText({
     model: provider.responses(MODEL),
-    messages,
+    system: system || undefined,
+    messages: rest,
     maxRetries: 0,
     providerOptions: {
       openai: {
