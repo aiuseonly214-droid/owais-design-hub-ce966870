@@ -99,6 +99,31 @@ A professional web-based CRM for **Owais Interior Designer** — from customer i
 - Company profile, default terms & conditions
 - Logo, stamp, signature upload (stamp prints as a light watermark)
 - Change password
+- **Team access** — employee access requests with Allow / Remove access
+
+### 10. Two Login Portals
+- `/auth` chooser → **Admin Portal** (`/admin-login`) and **Employee Portal** (`/employee-login`)
+- Same logo on both; an admin account cannot enter via Employee Portal and vice versa
+- Opening a portal while signed in with the other portal's account signs that session out first
+- New employees use "Request access" → admin approves in Settings
+
+```text
+Employee signup ──> Access request (no role) ──> Admin: Settings > Allow ──> Employee Portal login
+```
+
+### 11. Section & Totals Customisation
+- Group rows into named sections (Kitchen, Bedroom…)
+- Toggles: section subtotals · row-wise running subtotal · final totals
+- Option rows always excluded from every total
+
+### 12. AI Features (Lovable AI, no API key needed)
+- **AI Quotation Writer** — rough requirement → sectioned line items with qty & rates
+- **Inquiry Auto-Fill** — paste WhatsApp text → name, mobile, city, service, budget filled
+- **AI Business Insights** — dashboard tips from real inquiries, invoices and payments
+
+```text
+User text ──> Server function (auth checked) ──> AI Gateway ──> JSON validated ──> Form / Dashboard
+```
 
 ---
 
