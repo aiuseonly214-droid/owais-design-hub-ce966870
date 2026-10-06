@@ -55,7 +55,13 @@ export function LoginPortal({ portal }: { portal: Portal }) {
       .then(async ({ data, error }) => {
         if (!active) return;
         if (error) return void supabase.auth.signOut({ scope: "local" });
-        if (data.user && (await readRole(data.user.id))) navigate({ to: "/dashboard", replace: true });
+        if (!data.user) return;
+        // Already signed in on this portal → go in. Signed in with another
+        // portal's account (e.g. employee opening Admin Portal) → sign that
+        // session out so the other person can log in here.
+        const role = await readRole(data.user.id);
+        if (role === portal) navigate({ to: "/dashboard", replace: true });
+        else await supabase.auth.signOut({ scope: "local" });
       })
       .catch(() => void supabase.auth.signOut({ scope: "local" }));
     return () => {
