@@ -46,6 +46,7 @@ export function LoginPortal({ portal }: { portal: Portal }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
   const isAdmin = portal === "admin";
 
   useEffect(() => {
@@ -78,11 +79,13 @@ export function LoginPortal({ portal }: { portal: Portal }) {
     });
     if (error) {
       setBusy(false);
-      if (error.message.toLowerCase().includes("invalid login credentials")) {
-        return toast.error("Email ya password sahi nahi hai. Dobara check karein.");
-      }
-      return toast.error(error.message);
+      const msg = error.message.toLowerCase().includes("invalid login credentials")
+        ? "Email ya password galat hai. Dobara check karke daalein."
+        : error.message;
+      setLoginError(msg);
+      return toast.error(msg);
     }
+    setLoginError(null);
     const role = await readRole(data.user.id);
     setBusy(false);
     if (!role) {
@@ -125,6 +128,11 @@ export function LoginPortal({ portal }: { portal: Portal }) {
 
   const signInForm = (
     <form className="space-y-4" onSubmit={signIn}>
+      {loginError && (
+        <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
+          {loginError}
+        </div>
+      )}
       <div>
         <Label htmlFor="email" className="mb-1.5 block">Email</Label>
         <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
