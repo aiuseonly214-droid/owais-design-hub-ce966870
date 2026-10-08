@@ -20,6 +20,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedExpensesRouteImport } from './routes/_authenticated/expenses'
 import { Route as AuthenticatedInquiriesRouteImport } from './routes/_authenticated/inquiries'
 import { Route as AuthenticatedOutstandingRouteImport } from './routes/_authenticated/outstanding'
+import { Route as AuthenticatedPayrollRouteImport } from './routes/_authenticated/payroll'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedInvoicesIndexRouteImport } from './routes/_authenticated/invoices/index'
 import { Route as AuthenticatedInvoicesIdRouteImport } from './routes/_authenticated/invoices/$id'
@@ -88,6 +89,11 @@ const AuthenticatedOutstandingRoute =
     path: '/outstanding',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPayrollRoute = AuthenticatedPayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/expenses': typeof AuthenticatedExpensesRoute
   '/inquiries': typeof AuthenticatedInquiriesRoute
   '/outstanding': typeof AuthenticatedOutstandingRoute
+  '/payroll': typeof AuthenticatedPayrollRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/invoices/$id': typeof AuthenticatedInvoicesIdRoute
   '/invoices/new': typeof AuthenticatedInvoicesNewRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/expenses': typeof AuthenticatedExpensesRoute
   '/inquiries': typeof AuthenticatedInquiriesRoute
   '/outstanding': typeof AuthenticatedOutstandingRoute
+  '/payroll': typeof AuthenticatedPayrollRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/invoices/$id': typeof AuthenticatedInvoicesIdRoute
   '/invoices/new': typeof AuthenticatedInvoicesNewRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
   '/_authenticated/inquiries': typeof AuthenticatedInquiriesRoute
   '/_authenticated/outstanding': typeof AuthenticatedOutstandingRoute
+  '/_authenticated/payroll': typeof AuthenticatedPayrollRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/invoices/$id': typeof AuthenticatedInvoicesIdRoute
   '/_authenticated/invoices/new': typeof AuthenticatedInvoicesNewRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/inquiries'
     | '/outstanding'
+    | '/payroll'
     | '/settings'
     | '/invoices/$id'
     | '/invoices/new'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/inquiries'
     | '/outstanding'
+    | '/payroll'
     | '/settings'
     | '/invoices/$id'
     | '/invoices/new'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses'
     | '/_authenticated/inquiries'
     | '/_authenticated/outstanding'
+    | '/_authenticated/payroll'
     | '/_authenticated/settings'
     | '/_authenticated/invoices/$id'
     | '/_authenticated/invoices/new'
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOutstandingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/payroll': {
+      id: '/_authenticated/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof AuthenticatedPayrollRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -489,6 +508,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
   AuthenticatedInquiriesRoute: typeof AuthenticatedInquiriesRoute
   AuthenticatedOutstandingRoute: typeof AuthenticatedOutstandingRoute
+  AuthenticatedPayrollRoute: typeof AuthenticatedPayrollRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedInvoicesIdRoute: typeof AuthenticatedInvoicesIdRoute
   AuthenticatedInvoicesNewRoute: typeof AuthenticatedInvoicesNewRoute
@@ -509,6 +529,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
   AuthenticatedInquiriesRoute: AuthenticatedInquiriesRoute,
   AuthenticatedOutstandingRoute: AuthenticatedOutstandingRoute,
+  AuthenticatedPayrollRoute: AuthenticatedPayrollRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedInvoicesIdRoute: AuthenticatedInvoicesIdRoute,
   AuthenticatedInvoicesNewRoute: AuthenticatedInvoicesNewRoute,
