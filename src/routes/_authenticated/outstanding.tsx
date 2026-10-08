@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { requireAdmin } from "@/lib/guards";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronRight, IndianRupee, Search } from "lucide-react";
 import { PageHeader } from "@/components/AppShell";
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/_authenticated/outstanding")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  beforeLoad: () => requireAdmin(),
   component: OutstandingPage,
 });
 
