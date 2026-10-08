@@ -12,5 +12,5 @@ export async function requireAdmin() {
     .eq("user_id", uid)
     .eq("role", "admin")
     .maybeSingle();
-  if (!row) throw redirect({ to: "/dashboard", search: { denied: 1 } as never });
+  if (!row) throw redirect({ to: "/dashboard" });
 }
