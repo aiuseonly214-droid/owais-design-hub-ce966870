@@ -17,6 +17,7 @@ import { Route as EmployeeLoginRouteImport } from './routes/employee-login'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedExpensesRouteImport } from './routes/_authenticated/expenses'
 import { Route as AuthenticatedInquiriesRouteImport } from './routes/_authenticated/inquiries'
 import { Route as AuthenticatedOutstandingRouteImport } from './routes/_authenticated/outstanding'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -69,6 +70,11 @@ const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedExpensesRoute = AuthenticatedExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInquiriesRoute = AuthenticatedInquiriesRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/expenses': typeof AuthenticatedExpensesRoute
   '/inquiries': typeof AuthenticatedInquiriesRoute
   '/outstanding': typeof AuthenticatedOutstandingRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/expenses': typeof AuthenticatedExpensesRoute
   '/inquiries': typeof AuthenticatedInquiriesRoute
   '/outstanding': typeof AuthenticatedOutstandingRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
   '/_authenticated/inquiries': typeof AuthenticatedInquiriesRoute
   '/_authenticated/outstanding': typeof AuthenticatedOutstandingRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/customers'
     | '/dashboard'
+    | '/expenses'
     | '/inquiries'
     | '/outstanding'
     | '/settings'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/customers'
     | '/dashboard'
+    | '/expenses'
     | '/inquiries'
     | '/outstanding'
     | '/settings'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/customers'
     | '/_authenticated/dashboard'
+    | '/_authenticated/expenses'
     | '/_authenticated/inquiries'
     | '/_authenticated/outstanding'
     | '/_authenticated/settings'
@@ -361,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses': {
+      id: '/_authenticated/expenses'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof AuthenticatedExpensesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inquiries': {
@@ -467,6 +486,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
   AuthenticatedInquiriesRoute: typeof AuthenticatedInquiriesRoute
   AuthenticatedOutstandingRoute: typeof AuthenticatedOutstandingRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -486,6 +506,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
   AuthenticatedInquiriesRoute: AuthenticatedInquiriesRoute,
   AuthenticatedOutstandingRoute: AuthenticatedOutstandingRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,

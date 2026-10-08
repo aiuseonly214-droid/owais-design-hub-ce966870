@@ -130,7 +130,7 @@ function ExpensesPage() {
                 <TableCell className="uppercase">{r.mode}</TableCell>
                 <TableCell className="max-w-[220px] truncate">{[r.reference, r.notes].filter(Boolean).join(" · ") || "—"}</TableCell>
                 <TableCell className="text-right tabular-nums">{formatINR(r.amount)}</TableCell>
-                <TableCell><ConfirmDelete title="Delete this expense?" description="Ye entry hamesha ke liye hat jayegi." onConfirm={() => del.mutate(r.id)} /></TableCell>
+                <TableCell><ConfirmDelete label="Delete expense" description="Ye entry hamesha ke liye hat jayegi." onConfirm={() => del.mutate(r.id)} /></TableCell>
               </TableRow>
             ))}
           </TableBody>
