@@ -25,6 +25,8 @@ import {
 import { aiBusinessInsights } from "@/lib/ai.functions";
 import { formatDate, formatINR } from "@/lib/format";
 import { toast } from "sonner";
+import { useRole, useSession } from "@/hooks/use-session";
+import { fetchCashflow } from "@/lib/finance";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -59,7 +61,15 @@ function Dashboard() {
     }
   }
 
+  const { user } = useSession();
+  const { data: role } = useRole(user?.id);
+  const isAdmin = role === "admin";
   const { data: s } = useQuery({ queryKey: ["summary"], queryFn: fetchSummary });
+  const { data: cf } = useQuery({
+    queryKey: ["cashflow"],
+    queryFn: fetchCashflow,
+    enabled: isAdmin,
+  });
   const { data: inq } = useQuery({ queryKey: ["inquiry-stats"], queryFn: fetchInquiryStats });
   const { data: quotations = [] } = useQuery({
     queryKey: ["quotations", ""],
@@ -79,8 +89,21 @@ function Dashboard() {
     { label: "Conversion", value: `${inq?.conversion ?? 0}%`, icon: TrendingUp },
     { label: "Customers", value: String(s?.customers ?? 0), icon: Users },
     { label: "Quotations", value: String(s?.quotations ?? 0), icon: ScrollText },
-    { label: "Invoiced", value: formatINR(s?.invoiced ?? 0), icon: FileText },
-    { label: "Outstanding", value: formatINR(s?.outstanding ?? 0), icon: ReceiptIcon },
+    ...(isAdmin
+      ? [
+          { label: "Invoiced", value: formatINR(s?.invoiced ?? 0), icon: FileText },
+          { label: "Outstanding", value: formatINR(s?.outstanding ?? 0), icon: ReceiptIcon },
+          { label: "Money in (receipts)", value: formatINR(cf?.inflow ?? 0), icon: TrendingUp },
+          { label: "Money out (expenses + salary)", value: formatINR(cf?.outflow ?? 0), icon: ReceiptIcon },
+          { label: "Net cash in hand", value: formatINR(cf?.net ?? 0), icon: FileText },
+        ]
+      : [
+          {
+            label: "Pending quotations",
+            value: String(quotations.filter((q) => q.status === "draft" || q.status === "sent").length),
+            icon: ScrollText,
+          },
+        ]),
   ];
 
   return (
@@ -111,6 +134,7 @@ function Dashboard() {
             <Plus className="size-4" /> New Receipt
           </Link>
         </Button>
+        {isAdmin && (
         <Button size="sm" variant="outline" onClick={loadInsights} disabled={insightsBusy}>
           {insightsBusy ? (
             <Loader2 className="size-4 animate-spin" />
@@ -119,6 +143,7 @@ function Dashboard() {
           )}
           AI Insights
         </Button>
+        )}
         <Button asChild size="sm" variant="outline">
           <Link to="/customers">
             <Plus className="size-4" /> New Customer
@@ -147,7 +172,7 @@ function Dashboard() {
               </span>
               <div className="min-w-0">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-                {s && inq ? (
+                {s && inq && role && (!isAdmin || cf) ? (
                   <p className="truncate font-display text-xl">{value}</p>
                 ) : (
                   <Skeleton className="mt-1 h-6 w-24" />
@@ -173,12 +198,13 @@ function Dashboard() {
                   {q.customers?.name} · {formatDate(q.date)}
                 </span>
               </span>
-              <span className="shrink-0 tabular-nums">{formatINR(q.grand_total)}</span>
+              {isAdmin ? <span className="shrink-0 tabular-nums">{formatINR(q.grand_total)}</span> : <span className="shrink-0 text-xs capitalize text-muted-foreground">{q.status}</span>}
             </Link>
           ))}
           {quotations.length === 0 && <Empty>No quotations yet</Empty>}
         </RecentCard>
 
+        {isAdmin && (<>
         <RecentCard title="Recent Invoices">
           {invoices.slice(0, 5).map((i) => (
             <Link
@@ -218,6 +244,7 @@ function Dashboard() {
           ))}
           {receipts.length === 0 && <Empty>No receipts yet</Empty>}
         </RecentCard>
+        </>)}
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
 import { useRef } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Copy, FileText, Loader2, Pencil } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Check, Copy, FileText, Loader2, Pencil, Send, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DocActions } from "@/components/doc/DocActions";
@@ -26,6 +28,15 @@ function QuotationView() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const sheetRef = useRef<HTMLDivElement>(null);
+  const qc = useQueryClient();
+
+  async function setStatus(status: "draft" | "sent" | "approved" | "rejected") {
+    const { error } = await supabase.from("quotations").update({ status }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(`Quotation marked ${status}`);
+    qc.invalidateQueries({ queryKey: ["quotation", id] });
+    qc.invalidateQueries({ queryKey: ["quotations"] });
+  }
 
   const { data: company } = useQuery({ queryKey: ["company"], queryFn: fetchCompany });
   const { data } = useQuery({ queryKey: ["quotation", id], queryFn: () => fetchQuotation(id) });
@@ -79,12 +90,43 @@ function QuotationView() {
         <Button size="sm" variant="outline" onClick={duplicate}>
           <Copy className="size-4" /> Duplicate
         </Button>
-        <Button asChild size="sm" variant="outline">
-          <Link to="/invoices/new" search={{ from: id }}>
+        {doc.status === "approved" ? (
+          <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link to="/invoices/new" search={{ from: id }}>
+              <FileText className="size-4" /> Convert to Invoice
+            </Link>
+          </Button>
+        ) : (
+          <Button size="sm" variant="outline" disabled title="Pehle quotation Approved karein">
             <FileText className="size-4" /> Convert to Invoice
-          </Link>
-        </Button>
+          </Button>
+        )}
       </DocActions>
+
+      <div className="no-print mb-5 flex flex-wrap items-center gap-2">
+        <span className="text-sm text-muted-foreground">Status:</span>
+        <Badge variant="secondary" className="capitalize">{doc.status}</Badge>
+        {doc.status !== "sent" && doc.status !== "approved" && (
+          <Button size="sm" variant="outline" onClick={() => setStatus("sent")}>
+            <Send className="size-4" /> Mark as Sent
+          </Button>
+        )}
+        {doc.status !== "approved" && (
+          <Button size="sm" variant="outline" onClick={() => setStatus("approved")}>
+            <Check className="size-4" /> Mark as Approved
+          </Button>
+        )}
+        {doc.status !== "rejected" && (
+          <Button size="sm" variant="outline" onClick={() => setStatus("rejected")}>
+            <X className="size-4" /> Mark as Rejected
+          </Button>
+        )}
+        {doc.status !== "draft" && (
+          <Button size="sm" variant="ghost" onClick={() => setStatus("draft")}>
+            Back to Draft
+          </Button>
+        )}
+      </div>
 
       <TradeDocSheet
         ref={sheetRef}
