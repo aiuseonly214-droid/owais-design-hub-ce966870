@@ -11,6 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useRole, useSession } from "@/hooks/use-session";
 
 /** Icon button that asks for confirmation before running a destructive action. */
 export function ConfirmDelete({
@@ -24,6 +25,10 @@ export function ConfirmDelete({
   onConfirm: () => void;
   disabled?: boolean;
 }) {
+  // Deleting is admin-only; employees never see the button.
+  const { user } = useSession();
+  const { data: role } = useRole(user?.id);
+  if (role !== "admin") return null;
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

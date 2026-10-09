@@ -196,6 +196,16 @@
     display: none !important;
   }
 
+  [data-pdf-rows] tr,
+  .pdf-keep {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  [data-pdf-rows] thead {
+    display: table-header-group;
+  }
+
   .print-area {
     position: absolute;
     inset: 0;

@@ -76,6 +76,17 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
 
   const restore = await inlineImages(el);
   await waitForPaint(el);
+  // Safe page-break points (CSS px from the sheet top): bottom of every item
+  // row, and the start of the totals/terms/signature block.
+  const top = el.getBoundingClientRect().top;
+  const cssH = el.scrollHeight;
+  const breaks: number[] = [];
+  el.querySelectorAll("[data-pdf-rows] tr").forEach((tr) => {
+    breaks.push(tr.getBoundingClientRect().bottom - top);
+  });
+  const keep = el.querySelector("[data-pdf-keepstart]");
+  if (keep) breaks.push(keep.getBoundingClientRect().top - top);
+  breaks.sort((a, b) => a - b);
   let canvas: HTMLCanvasElement;
   try {
     canvas = await html2canvas(el, {
@@ -107,23 +118,28 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
   const pxPerMm = canvas.width / pageW;
-  const pageHpx = Math.floor(pageH * pxPerMm);
+  const cssToPx = canvas.height / cssH;
+  const TOP = 10; // mm top margin on continuation pages
+  const BOTTOM = 10; // mm reserved for the page counter
 
-  // A sheet that is only slightly taller than A4 is scaled down to fit one page
-  // instead of spilling a near-empty second page.
-  if (canvas.height <= pageHpx * 1.3) {
+  if (canvas.height <= Math.floor(pageH * pxPerMm) * 1.04) {
     const h = Math.min(pageH, canvas.height / pxPerMm);
     const w = (canvas.width / pxPerMm) * (h / (canvas.height / pxPerMm));
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", (pageW - w) / 2, 0, w, h);
-
   } else {
-    // Slice the tall canvas into real A4 pages so nothing overlaps.
+    const bp = breaks.map((b) => Math.round(b * cssToPx));
     let y = 0;
-    let first = true;
-    while (y < canvas.height) {
-      const sliceH = Math.min(pageHpx, canvas.height - y);
-      // Skip a trailing sliver of empty whitespace.
-      if (!first && sliceH < pageHpx * 0.12) break;
+    let page = 0;
+    while (y < canvas.height - 4) {
+      const offset = page === 0 ? 0 : TOP;
+      const room = Math.floor((pageH - offset - BOTTOM) * pxPerMm);
+      let end = Math.min(y + room, canvas.height);
+      if (end < canvas.height) {
+        // Cut at the last row boundary that fits, never through a row/signature.
+        const safe = bp.filter((b) => b > y + room * 0.3 && b <= y + room);
+        if (safe.length) end = safe[safe.length - 1];
+      }
+      const sliceH = end - y;
       const slice = document.createElement("canvas");
       slice.width = canvas.width;
       slice.height = sliceH;
@@ -132,12 +148,18 @@ export async function exportElementToPdf(el: HTMLElement, filename: string) {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, slice.width, slice.height);
       ctx.drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
-      if (!first) pdf.addPage();
-      pdf.addImage(slice.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, pageW, sliceH / pxPerMm);
-      first = false;
-      y += sliceH;
+      if (page > 0) pdf.addPage();
+      pdf.addImage(slice.toDataURL("image/jpeg", 0.95), "JPEG", 0, offset, pageW, sliceH / pxPerMm);
+      page++;
+      y = end;
     }
-
+    const total = pdf.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(110, 120, 135);
+      pdf.text(`Page ${i} of ${total}`, pageW / 2, pageH - 4, { align: "center" });
+    }
   }
 
   const name = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;

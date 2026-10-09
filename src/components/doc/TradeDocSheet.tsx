@@ -94,7 +94,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       )}
 
       <div className="px-10 pt-5">
-        <table className="w-full border-collapse text-[12.5px]">
+        <table data-pdf-rows className="w-full border-collapse text-[12.5px]">
           <thead>
             <tr style={{ backgroundColor: DOC.primary, color: DOC.primaryText }}>
               <th className="w-[38px] border border-[#123A70] px-2 py-2 text-center font-semibold">
@@ -189,8 +189,9 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
         </table>
       </div>
 
+      <div data-pdf-keepstart />
       {doc.show_totals !== false && (
-      <div className="flex justify-end px-10 pt-4">
+      <div className="pdf-keep flex justify-end px-10 pt-4">
         <table className="w-[280px] text-[13px]">
           <tbody>
             <tr>
@@ -231,7 +232,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       {doc.show_totals !== false && (
       <div
         style={{ backgroundColor: "#EEF4FB", borderColor: DOC.border }}
-        className="mx-10 mt-4 border px-3 py-2 text-[12.5px]"
+        className="pdf-keep mx-10 mt-4 border px-3 py-2 text-[12.5px]"
       >
         <span className="text-[#5A6B80]">Amount in words: </span>
         <span className="font-medium text-[#12233A]">{doc.amount_words || "—"}</span>
@@ -239,7 +240,7 @@ export const TradeDocSheet = forwardRef<HTMLDivElement, Props>(function TradeDoc
       )}
 
       {doc.terms && (
-        <div className="px-10 pt-5">
+        <div className="pdf-keep px-10 pt-5">
           <p
             style={{ color: DOC.primary }}
             className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
