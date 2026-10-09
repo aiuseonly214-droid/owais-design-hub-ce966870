@@ -60,7 +60,7 @@ export function DocFooter({
   leftLabel?: string;
 }) {
   return (
-    <div className="mt-auto">
+    <div className="pdf-keep mt-auto">
       <div className="flex items-end justify-between gap-8 px-10 pb-6 pt-10">
         <div className="w-[210px] text-center">
           <div style={{ borderColor: DOC.border }} className="mb-1 h-[56px] border-b border-dashed" />
